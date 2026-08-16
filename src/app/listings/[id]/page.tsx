@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
+import { ContactButton } from "./ContactButton";
 
 // Listing detail (server-rendered for SEO — docs/system-design.md §6).
 // Gallery/map/similar/contact-reveal are Week 3–4 work; this renders core facts.
@@ -31,7 +32,10 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
         {listing.locality?.name ?? "—"} · {listing.areaSqft ?? "—"} sqft · {listing.bathrooms ?? "—"} bath
       </p>
       {listing.description && <p>{listing.description}</p>}
-      {/* TODO: gallery, map, amenities, similar listings, OTP-gated contact reveal */}
+      <div style={{ marginTop: "1.25rem" }}>
+        <ContactButton listingId={listing.id} />
+      </div>
+      {/* TODO: gallery, map, amenities, similar listings */}
     </article>
   );
 }

@@ -9,6 +9,8 @@ its header — see [docs/README.md](./README.md) for the convention.
 - Week 1 build (branch `feat/week1-auth-search`): JWT session cookie + `/api/me`, search results
   page, sample-listings seed. Local dev runs on plain Postgres (local or managed); Docker removed.
   See `build-plan-phase1.md` Week 1.
+- Contact loop: dev-login (`/api/dev/login`, skips OTP) + `/api/listings/:id/contact` records an
+  enquiry and reveals the lister phone; wired into listing detail. Verified end-to-end on local DB.
 
 ## 2026-08-16 (later)
 ### Added

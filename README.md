@@ -52,28 +52,28 @@ configured" error.
 1. **Search UI:** open http://localhost:3000, search locality `Wakad`/`Baner`/`Hinjewadi`/`Kharadi`
    → results grid → click a card → SSR listing detail.
 2. **Search API:** `GET http://localhost:3000/api/listings/search?intent=rent&bhk=2`
-3. **OTP + session (curl / REST client):**
+3. **Contact loop (OTP skipped via dev-login):**
    ```bash
-   # 1) request code — printed to the `npm run dev` server console (dev stub)
-   curl -X POST localhost:3000/api/auth/otp/request -H "content-type: application/json" -d "{\"phone\":\"+919990001234\"}"
-   # 2) verify with the code from the console → sets httpOnly session cookie
-   curl -X POST localhost:3000/api/auth/otp/verify  -H "content-type: application/json" -d "{\"request_id\":\"<id>\",\"code\":\"<code>\"}" -c cookies.txt
-   # 3) who am I — uses the cookie
+   # log in without OTP (dev only) → sets httpOnly session cookie
+   curl -X POST localhost:3000/api/dev/login -H "content-type: application/json" -d "{\"role\":\"buyer\"}" -c cookies.txt
    curl localhost:3000/api/me -b cookies.txt
+   # contact a listing → records an enquiry, reveals the lister's phone
+   curl -X POST localhost:3000/api/listings/seed-listing-1/contact -H "content-type: application/json" -d "{\"channel\":\"call\"}" -b cookies.txt
    ```
-4. **Create a listing (draft):** `POST /api/listings` with `ownerId` (from step 3), `intent`,
-   `propertyType`, `price`, `lat`, `lng`.
+   In the browser: open a listing → **Contact lister** (call `/api/dev/login` once first for a session).
+4. **Real OTP (optional):** `POST /api/auth/otp/request` then `/verify` — the code prints to the
+   `npm run dev` server console (dev stub). Create a listing draft via `POST /api/listings`.
 
 ### Verified
 - `npm run typecheck` ✅ · `npm run build` ✅ (7 routes compile: landing, listing detail, OTP
   request/verify, listings create, listings search).
 
 ### Implemented vs. TODO
-- **Wired:** phone-OTP request/verify (dev stub), **JWT session cookie + `/api/me`**, listing
-  create (draft), listing search (filters + cursor pagination), **search results page**, listing
-  detail (SSR), landing search UI, **sample-data seed**.
-- **TODO (see build plan):** real SMS provider, media upload + pHash, OTP-gated contact reveal,
-  moderation queue, map+list synced results UI, saved searches. Marked with `TODO` in code.
+- **Wired:** phone-OTP request/verify (dev stub), **dev-login (skip OTP)**, JWT session cookie +
+  `/api/me`, listing create (draft), listing search (filters + cursor pagination), search results
+  page, listing detail (SSR), **contact → enquiry + phone reveal**, landing search UI, sample-data seed.
+- **TODO (see build plan):** real SMS/OTP gating, media upload + pHash, moderation queue, post-a-
+  listing UI, map+list synced results UI, saved searches. Marked with `TODO` in code.
 
 ## Status
 🏗️ **Planning docs complete + MVP scaffold building.** See
