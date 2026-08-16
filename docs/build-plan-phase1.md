@@ -34,7 +34,7 @@ product, and the enquiry appears in both dashboards.
 ### Week 4 — Contact loop + moderation
 - [x] Contact reveal + enquiry create (`call`/`form`/`whatsapp`) — dev-login stands in for OTP
 - [ ] Swap dev-login for real OTP gating on contact reveal
-- [ ] Buyer & lister dashboards (my listings, my enquiries, respond → sets `lister_responded_at`)
+- [x] Lister dashboard (`/dashboard`): my listings + enquiries received, respond → sets `lister_responded_at` (buyer dashboard TODO)
 - [ ] Internal moderation queue: approve/reject + reason; auto-flag rules (dup pHash, one phone→many)
 - [ ] SEO baseline: SSR listing/locality pages, schema.org, sitemap
 

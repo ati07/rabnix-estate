@@ -63,6 +63,9 @@ configured" error.
    In the browser: open a listing → **Contact lister** (call `/api/dev/login` once first for a session).
 5. **Post a property:** open **/post** → click "Log in as owner (dev)" if prompted → fill the form →
    **Publish** → you land on the new live listing, which now appears in search.
+6. **Lister dashboard:** log in as owner (dev) → open **/dashboard** → see your listings (status +
+   enquiry counts) and enquiries received → **Mark responded** on an enquiry (sets
+   `listerRespondedAt`, the response-rate guardrail).
 4. **Real OTP (optional):** `POST /api/auth/otp/request` then `/verify` — the code prints to the
    `npm run dev` server console (dev stub). Create a listing draft via `POST /api/listings`.
 
@@ -74,9 +77,10 @@ configured" error.
 - **Wired:** phone-OTP request/verify (dev stub), **dev-login (skip OTP)**, JWT session cookie +
   `/api/me`, **post-a-listing UI** (`/post` → draft → publish), listing search (filters + cursor
   pagination), search results page, listing detail (SSR), **contact → enquiry + phone reveal**,
+  **lister dashboard** (`/dashboard` — my listings + enquiries received + respond),
   landing search UI, sample-data seed.
 - **TODO (see build plan):** real SMS/OTP gating, media upload + pHash, moderation queue, map+list
-  synced results UI, lister dashboard, saved searches. Marked with `TODO` in code.
+  synced results UI, buyer dashboard, saved searches. Marked with `TODO` in code.
 
 ## Status
 🏗️ **Planning docs complete + MVP scaffold building.** See

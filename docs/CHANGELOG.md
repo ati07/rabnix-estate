@@ -14,6 +14,9 @@ its header — see [docs/README.md](./README.md) for the convention.
 - Post-a-listing UI (`/post`): session-based create (`POST /api/listings`, no more ownerId in body)
   + publish (`/api/listings/:id/submit`, dev auto-live / prod pending). Location derived from
   locality. Verified: post → publish → appears in search.
+- Lister dashboard (`/dashboard`): my listings (status + enquiry counts) and enquiries received;
+  "Mark responded" (`POST /api/enquiries/:id/respond`) sets `listerRespondedAt` (response-rate
+  guardrail). Ownership-enforced (non-owner → 403). Verified end-to-end on local DB.
 
 ## 2026-08-16 (later)
 ### Added

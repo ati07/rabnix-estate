@@ -15,6 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Link className="brand" href="/">Rabnix Estate</Link>
           <span className="tagline">Trust-first home search</span>
           <nav className="site-nav">
+            <Link href="/dashboard">Dashboard</Link>
             <Link href="/post">Post a property</Link>
           </nav>
         </header>
