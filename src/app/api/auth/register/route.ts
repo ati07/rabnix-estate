@@ -4,6 +4,7 @@ import { fail } from "@/lib/http";
 import { prisma } from "@/lib/db";
 import { hashPassword } from "@/lib/password";
 import { createSession, SESSION_COOKIE, SESSION_MAX_AGE } from "@/lib/session";
+import { authLimiter, clientIp } from "@/lib/rateLimit";
 
 // POST /api/auth/register { email, password, fullName?, phone?, role? }
 //   → 200 { user } + httpOnly session cookie | 409 if email/phone taken
@@ -17,6 +18,10 @@ const Body = z.object({
 });
 
 export async function POST(req: Request) {
+  if (!authLimiter.check(clientIp(req)).ok) {
+    return fail("RATE_LIMITED", "Too many attempts. Try again in a minute.", 429);
+  }
+
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) {
     const fields = Object.fromEntries(

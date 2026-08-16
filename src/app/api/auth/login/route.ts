@@ -4,11 +4,16 @@ import { fail } from "@/lib/http";
 import { prisma } from "@/lib/db";
 import { verifyPassword } from "@/lib/password";
 import { createSession, SESSION_COOKIE, SESSION_MAX_AGE } from "@/lib/session";
+import { authLimiter, clientIp } from "@/lib/rateLimit";
 
 // POST /api/auth/login { email, password } → 200 { user } + httpOnly session cookie | 401
 const Body = z.object({ email: z.string().email(), password: z.string().min(1) });
 
 export async function POST(req: Request) {
+  if (!authLimiter.check(clientIp(req)).ok) {
+    return fail("RATE_LIMITED", "Too many attempts. Try again in a minute.", 429);
+  }
+
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return fail("VALIDATION_ERROR", "Enter your email and password", 400);
 

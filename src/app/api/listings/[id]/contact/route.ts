@@ -2,6 +2,7 @@ import { z } from "zod";
 import { ok, fail } from "@/lib/http";
 import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/auth";
+import { contactLimiter, clientIp } from "@/lib/rateLimit";
 
 // POST /api/listings/:id/contact  { channel?, message? } → 200 { phone } | 401
 // Records an enquiry (North Star metric) and reveals the lister's phone.
@@ -13,6 +14,10 @@ const Body = z.object({
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await getSessionUser();
   if (!user) return fail("UNAUTHENTICATED", "Log in to contact the lister", 401);
+
+  if (!contactLimiter.check(clientIp(req)).ok) {
+    return fail("RATE_LIMITED", "Too many requests. Slow down and try again shortly.", 429);
+  }
 
   const { id } = await params;
   const parsed = Body.safeParse(await req.json().catch(() => ({})));
