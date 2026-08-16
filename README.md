@@ -75,7 +75,11 @@ configured" error.
    → open **/admin/moderation** to see pending listings with photos, key facts, and auto-flags
    (duplicate image via pHash, one-phone-many). **Approve** → the listing goes `live` and appears in
    search; **Reject** with a reason → owner sees the reason on their dashboard.
-8. **Phone-OTP (deferred, optional):** `POST /api/auth/otp/request` then `/verify` — the code prints
+8. **Auto-expiry:** listings carry an `expiresAt` (~45 days). `POST /api/cron/expire-listings` flips
+   any `live` listing past its expiry to `expired` (returns `{ expired: n }`); search also hides
+   stale listings defensively. Point a daily scheduler at it (Vercel Cron, a GitHub Actions cron, or
+   OS cron/curl) and set `CRON_SECRET` in production (`Authorization: Bearer <CRON_SECRET>`).
+9. **Phone-OTP (deferred, optional):** `POST /api/auth/otp/request` then `/verify` — the code prints
    to the `npm run dev` console (dev stub). Real SMS-OTP login lands later.
 
 ### Tests & CI

@@ -20,7 +20,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
     );
   }
 
-  if (!listing || listing.status !== "live") notFound();
+  if (!listing || listing.status !== "live" || listing.expiresAt < new Date()) notFound();
 
   const photos = [...listing.media].sort((a, b) => a.ord - b.ord);
 

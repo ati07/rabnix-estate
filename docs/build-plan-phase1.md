@@ -26,7 +26,8 @@ product, and the enquiry appears in both dashboards.
 - [x] Post flow: `/post` form → draft → publish; location from locality (map pin, photos, autosave TODO)
 - [x] Media pipeline: upload → WebP + blur placeholder; EXIF strip; pHash (dHash) + dup-reject.
       Local FS storage behind a swappable interface; responsive delivery via next/image; real CDN TODO.
-- [x] `expires_at` set on create (auto-expiry job TODO)
+- [x] `expires_at` set on create; auto-expiry job (`/api/cron/expire-listings`) flips `live`→`expired`
+      past `expires_at` (CRON_SECRET-guarded; search also hides stale listings defensively)
 
 ### Week 3 — Search & detail (demand)
 - [ ] Search API: locality + filters + `bbox`, Postgres FTS + PostGIS (no search engine yet)

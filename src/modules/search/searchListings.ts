@@ -25,6 +25,8 @@ export type SearchInput = z.infer<typeof SearchParams>;
 export async function searchListings(input: SearchInput) {
   const where: Prisma.ListingWhereInput = {
     status: "live",
+    expiresAt: { gt: new Date() }, // defensive: hide stale listings even before the expiry job runs
+
     ...(input.intent && { intent: input.intent }),
     ...(input.localityId && { localityId: input.localityId }),
     ...(input.propertyType && { propertyType: input.propertyType }),
