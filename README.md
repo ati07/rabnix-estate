@@ -53,7 +53,8 @@ configured" error.
    tolerant: `Wakhad`→Wakad, `Hinjawadi`→Hinjewadi). Results open at `/search` as a **synced
    map + list** (Leaflet/OSM price-bubble pins; hover a card to highlight its pin, click a pin to
    jump to the card) with a **filter/sort bar** (intent, type, BHK, price, sort) and **Load more**
-   pagination. Click a card → SSR listing detail.
+   pagination. Pan/zoom the map and hit **Search this area** to re-query within the visible bounds
+   (the map stays put). Click a card → SSR listing detail.
 2. **Search API:** `GET http://localhost:3000/api/listings/search?intent=rent&bhk=2`
 3. **Sign in / register:** open **/login** → "Create account" (email + password; pick buyer or
    owner) → you're signed in (nav shows your name + **Log out**). API equivalent:

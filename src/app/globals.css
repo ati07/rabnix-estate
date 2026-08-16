@@ -131,7 +131,9 @@ a.btn { display: inline-block; text-decoration: none; text-align: center; }
 .result-actions { padding: 0 1rem 0.85rem; }
 .results-more { text-align: center; }
 .results-map { position: sticky; top: 1rem; height: calc(100vh - 3rem); }
+.results-map-wrap { position: relative; height: 100%; }
 .results-map-inner, .results-map-loading { height: 100%; width: 100%; border-radius: 12px; }
+.search-area-btn { position: absolute; z-index: 1000; top: 12px; left: 50%; transform: translateX(-50%); background: var(--panel); color: var(--text); border: 1px solid var(--accent); border-radius: 999px; padding: 0.4rem 0.9rem; font-weight: 600; font-size: 0.85rem; font-family: inherit; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
 .results-map-loading { display: flex; align-items: center; justify-content: center; background: var(--panel); border: 1px solid var(--border); color: var(--muted); }
 .price-pin { display: inline-block; background: var(--panel); color: var(--text); border: 1px solid var(--accent); border-radius: 999px; padding: 2px 8px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; text-align: center; box-shadow: 0 1px 5px rgba(0,0,0,0.5); }
 .price-pin.active { background: var(--accent); color: #fff; }

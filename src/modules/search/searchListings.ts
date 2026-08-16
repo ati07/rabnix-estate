@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { z } from "zod";
 import type { Prisma } from "@prisma/client";
+import { parseBbox } from "./bbox";
 
 // Search module. Phase 1 uses Postgres directly (docs/system-design.md §3);
 // a dedicated search engine (Typesense/Meili) is added only when facet latency hurts.
@@ -15,6 +16,7 @@ export const SearchParams = z.object({
   priceMin: z.coerce.number().nonnegative().optional(),
   priceMax: z.coerce.number().nonnegative().optional(),
   bhk: z.coerce.number().int().min(0).max(20).optional(),
+  bbox: z.string().optional(), // "minLng,minLat,maxLng,maxLat" — map viewport ("search this area")
   sort: z.enum(["relevance", "price_asc", "price_desc", "newest"]).default("relevance"),
   cursor: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(50).default(20),
@@ -23,10 +25,15 @@ export const SearchParams = z.object({
 export type SearchInput = z.infer<typeof SearchParams>;
 
 export async function searchListings(input: SearchInput) {
+  const bbox = parseBbox(input.bbox);
   const where: Prisma.ListingWhereInput = {
     status: "live",
     expiresAt: { gt: new Date() }, // defensive: hide stale listings even before the expiry job runs
 
+    ...(bbox && {
+      lat: { gte: bbox.minLat, lte: bbox.maxLat },
+      lng: { gte: bbox.minLng, lte: bbox.maxLng },
+    }),
     ...(input.intent && { intent: input.intent }),
     ...(input.localityId && { localityId: input.localityId }),
     ...(input.propertyType && { propertyType: input.propertyType }),

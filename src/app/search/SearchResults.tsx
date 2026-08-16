@@ -84,6 +84,26 @@ export function SearchResults({
     cardRefs.current.get(id)?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, []);
 
+  // "Search this area" — re-query within the current map bounds, replacing the list. The map stays
+  // put (FitBounds only fires once), so pins refresh under a fixed viewport.
+  const onSearchArea = useCallback(
+    async (bbox: string) => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams({ ...apiQuery, bbox });
+        const res = await fetch(`/api/listings/search?${params.toString()}`);
+        if (res.ok) {
+          const body = await res.json();
+          setResults((body.results as ApiListing[]).map(fromApi));
+          setCursor(body.nextCursor ?? null);
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [apiQuery],
+  );
+
   async function loadMore() {
     if (!cursor) return;
     setLoading(true);
@@ -155,6 +175,7 @@ export function SearchResults({
           results={results}
           activeId={activeId}
           onSelect={onSelectFromMap}
+          onSearchArea={onSearchArea}
           fallbackCenter={fallbackCenter}
         />
       </div>

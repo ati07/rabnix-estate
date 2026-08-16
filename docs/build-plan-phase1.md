@@ -30,7 +30,8 @@ product, and the enquiry appears in both dashboards.
       past `expires_at` (CRON_SECRET-guarded; search also hides stale listings defensively)
 
 ### Week 3 — Search & detail (demand)
-- [ ] Search API: locality + filters + `bbox`, Postgres FTS + PostGIS (no search engine yet)
+- [~] Search API: locality + filters + `bbox` done ("search this area" filters live listings by the
+      map viewport, plain Postgres lat/lng range). Postgres FTS + PostGIS radius still TODO.
 - [x] Results UI: synced map + list (Leaflet + OSM, price-bubble pins, hover/click sync,
       load-more pagination) + a filter/sort bar (intent, type, BHK, price, sort)
 - [x] Locality autocomplete (typo-tolerant, `/api/localities/search`). In-memory ranking
