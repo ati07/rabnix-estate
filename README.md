@@ -94,7 +94,7 @@ for TDD. GitHub Actions ([.github/workflows/ci.yml](./.github/workflows/ci.yml))
 **lint + typecheck + test** on every push to `main` and every PR.
 
 ### Verified
-- `npm run lint` ✅ · `npm run typecheck` ✅ · `npm test` ✅ (30 tests) · `npm run build` ✅.
+- `npm run lint` ✅ · `npm run typecheck` ✅ · `npm test` ✅ (35 tests) · `npm run build` ✅.
 
 ### Implemented vs. TODO
 - **Wired:** **email + password auth** (`/login` — register/login/logout, JWT session cookie +
@@ -103,12 +103,13 @@ for TDD. GitHub Actions ([.github/workflows/ci.yml](./.github/workflows/ci.yml))
   strip → WebP + blur placeholder → pHash/dup-reject; gallery + search thumbnails), **moderation
   queue** (`/admin/moderation` — submit → pending → approve/reject + reason, auto-flags),
   **search UX** (locality autocomplete + synced Leaflet map/list + filter-sort bar + load-more
-  pagination), listing detail (SSR), **contact → enquiry + phone reveal**, **dashboard** (`/dashboard` — lister: my listings +
+  pagination + "search this area"), listing detail (SSR), **SEO baseline** (per-listing metadata +
+  schema.org JSON-LD, `sitemap.xml`, `robots.txt`), **contact → enquiry + phone reveal**, **dashboard** (`/dashboard` — lister: my listings +
   enquiries received + respond; buyer: **saved homes** + enquiries I've sent), **auto-expiry job**
   (`/api/cron/expire-listings`), landing search UI, sample-data seed.
 - **TODO (see build plan):** real SMS/OTP login, real CDN for media, price-outlier/keyword-spam
-  auto-flags, PostGIS bbox/radius search + pg_trgm autocomplete, saved-search alerts, SEO baseline
-  (sitemap/schema.org). Marked with `TODO` in code.
+  auto-flags, PostGIS bbox/radius search + pg_trgm autocomplete, saved-search alerts,
+  listing-detail enrichment (amenities, mini-map, similar). Marked with `TODO` in code.
 
 ## Status
 🏗️ **Planning docs complete + MVP scaffold building.** See

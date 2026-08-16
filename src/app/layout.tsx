@@ -2,11 +2,23 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { getSessionUser } from "@/lib/auth";
+import { siteUrl } from "@/lib/seo";
 import { LogoutButton } from "./LogoutButton";
 
+const DESCRIPTION =
+  "The most trusted place to find a home. Verified listings, responsive listers.";
+
 export const metadata: Metadata = {
-  title: "Rabnix Estate — Trusted homes",
-  description: "The most trusted place to find a home. Verified listings, responsive listers.",
+  metadataBase: new URL(siteUrl()),
+  title: { default: "Rabnix Estate — Trusted homes", template: "%s · Rabnix Estate" },
+  description: DESCRIPTION,
+  openGraph: {
+    type: "website",
+    siteName: "Rabnix Estate",
+    title: "Rabnix Estate — Trusted homes",
+    description: DESCRIPTION,
+  },
+  twitter: { card: "summary_large_image", title: "Rabnix Estate", description: DESCRIPTION },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

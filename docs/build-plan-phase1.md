@@ -45,7 +45,8 @@ product, and the enquiry appears in both dashboards.
       `lister_responded_at`) **and** buyer side (saved homes via the Favorite model + enquiries I've sent)
 - [x] Internal moderation queue (`/admin/moderation`, admin-only): submit → pending → approve/reject
       + reason; auto-flags (dup pHash, one phone→many) computed on the fly. Price-outlier/keyword-spam TODO.
-- [ ] SEO baseline: SSR listing/locality pages, schema.org, sitemap
+- [x] SEO baseline: SSR listing pages + per-listing `generateMetadata` (title/description/OG) +
+      schema.org JSON-LD; `sitemap.xml` (listings + per-locality search) + `robots.txt`
 
 ### Weeks 5–6 — Harden & seed
 - [ ] Anti-fraud scoring pass; rate limits; abuse reporting
