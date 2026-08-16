@@ -54,7 +54,9 @@ product, and the enquiry appears in both dashboards.
 - [ ] Anti-fraud scoring pass; rate limits; abuse reporting
 - [ ] Manual + agent-partnership **supply seeding** in ONE dense locality (ops, not code)
 - [ ] Analytics funnel dashboards vs. North Star (qualified enquiries/wk) + response-rate guardrail
-- [ ] Perf pass: LCP < 2.5s on 4G; image lazy-load; map lazy-init
+- [~] Perf pass: LCP image `priority`; non-LCP images lazy (next/image default) + WebP + blur
+      placeholders; map lazy-init (`next/dynamic ssr:false`). 4G LCP <2.5s target still needs a
+      prod-build Lighthouse run to confirm.
 - [ ] Private beta → invite first buyers only after supply liquidity exists
 
 ## Cut lines (do NOT build in Phase 1)

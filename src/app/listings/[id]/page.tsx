@@ -111,7 +111,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
 
       {photos.length > 0 && (
         <div className="gallery">
-          {photos.map((m) => (
+          {photos.map((m, i) => (
             <Image
               key={m.id}
               src={m.url}
@@ -119,6 +119,8 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
               width={m.width ?? 1600}
               height={m.height ?? 1200}
               sizes="(max-width: 700px) 100vw, 700px"
+              // First photo is the LCP element — load it eagerly; the rest stay lazy (default).
+              priority={i === 0}
               placeholder={m.blurDataUrl ? "blur" : "empty"}
               blurDataURL={m.blurDataUrl ?? undefined}
             />
