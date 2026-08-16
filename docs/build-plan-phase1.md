@@ -18,7 +18,8 @@ product, and the enquiry appears in both dashboards.
       Phone-OTP stub also wired (`/auth/otp/*`); real SMS-OTP login is deferred (Week 4).
 - [x] Seed `cities` + `localities` for the launch city (+ sample listings; boundaries TODO)
 - [x] Local dev: plain Postgres (local install or managed Neon/Supabase) — no Docker needed
-- [ ] CI: lint + typecheck + test; Sentry + PostHog wired
+- [x] CI: lint + typecheck + test (GitHub Actions `.github/workflows/ci.yml`; vitest unit tests for
+      pHash/moderation logic). Sentry + PostHog wiring TODO.
 
 ### Week 2 — Listing creation (supply)
 - [x] Listing data model + migrations (see `data-model.sql`)

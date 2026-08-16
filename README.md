@@ -78,9 +78,14 @@ configured" error.
 8. **Phone-OTP (deferred, optional):** `POST /api/auth/otp/request` then `/verify` — the code prints
    to the `npm run dev` console (dev stub). Real SMS-OTP login lands later.
 
+### Tests & CI
+`npm test` runs the [vitest](https://vitest.dev) unit suite (pure pHash + moderation logic —
+`hammingDistance`, `isDuplicate`, `dHash`, `flagsForListing`; no DB needed). `npm run test:watch`
+for TDD. GitHub Actions ([.github/workflows/ci.yml](./.github/workflows/ci.yml)) runs
+**lint + typecheck + test** on every push to `main` and every PR.
+
 ### Verified
-- `npm run typecheck` ✅ · `npm run build` ✅ (7 routes compile: landing, listing detail, OTP
-  request/verify, listings create, listings search).
+- `npm run lint` ✅ · `npm run typecheck` ✅ · `npm test` ✅ (21 tests) · `npm run build` ✅.
 
 ### Implemented vs. TODO
 - **Wired:** **email + password auth** (`/login` — register/login/logout, JWT session cookie +
