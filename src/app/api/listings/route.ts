@@ -11,7 +11,7 @@ const Body = z.object({
   price: z.number().positive(),
   lat: z.number(),
   lng: z.number(),
-  localityId: z.string().uuid().optional(),
+  localityId: z.string().min(1).optional(),
   bedrooms: z.number().int().min(0).max(20).optional(),
   areaSqft: z.number().int().positive().optional(),
   title: z.string().max(140).optional(),

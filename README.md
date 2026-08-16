@@ -36,23 +36,44 @@ boundaries and API surface from the docs. Modules live under `src/modules` (`aut
 ### Quickstart
 ```bash
 npm install
-cp .env.example .env          # set DATABASE_URL (Postgres + PostGIS), tweak the launch-city vars
-npm run db:generate           # prisma client
-npm run db:push               # create tables
-npm run db:seed               # seed launch city + localities
-npm run dev                   # http://localhost:3000
+copy .env.example .env         # DATABASE_URL default matches docker-compose below
+docker compose up -d           # local Postgres + PostGIS on :5432
+npm run db:generate            # prisma client
+npm run db:push                # create tables
+npm run db:seed                # launch city + localities + 4 sample listings
+npm run dev                    # http://localhost:3000
 ```
 Without a database the UI still renders; API routes return a clear "database not configured" error.
+
+### Local testing — what to try
+1. **Search UI:** open http://localhost:3000, search locality `Wakad`/`Baner`/`Hinjewadi`/`Kharadi`
+   → results grid → click a card → SSR listing detail.
+2. **Search API:** `GET http://localhost:3000/api/listings/search?intent=rent&bhk=2`
+3. **OTP + session (curl / REST client):**
+   ```bash
+   # 1) request code — printed to the `npm run dev` server console (dev stub)
+   curl -X POST localhost:3000/api/auth/otp/request -H "content-type: application/json" -d "{\"phone\":\"+919990001234\"}"
+   # 2) verify with the code from the console → sets httpOnly session cookie
+   curl -X POST localhost:3000/api/auth/otp/verify  -H "content-type: application/json" -d "{\"request_id\":\"<id>\",\"code\":\"<code>\"}" -c cookies.txt
+   # 3) who am I — uses the cookie
+   curl localhost:3000/api/me -b cookies.txt
+   ```
+4. **Create a listing (draft):** `POST /api/listings` with `ownerId` (from step 3), `intent`,
+   `propertyType`, `price`, `lat`, `lng`.
+
+No Docker? Point `DATABASE_URL` at a free Neon/Supabase Postgres (enable the `postgis` extension) and
+skip the `docker compose` step.
 
 ### Verified
 - `npm run typecheck` ✅ · `npm run build` ✅ (7 routes compile: landing, listing detail, OTP
   request/verify, listings create, listings search).
 
 ### Implemented vs. TODO
-- **Wired:** phone-OTP request/verify (dev stub logs code to console), listing create (draft),
-  listing search (filters + cursor pagination), listing detail (SSR), landing search UI.
-- **TODO (see build plan):** JWT sessions, media upload + pHash, OTP-gated contact reveal,
-  moderation queue, map+list results UI, saved searches. Marked with `TODO` in code.
+- **Wired:** phone-OTP request/verify (dev stub), **JWT session cookie + `/api/me`**, listing
+  create (draft), listing search (filters + cursor pagination), **search results page**, listing
+  detail (SSR), landing search UI, **sample-data seed**, **docker-compose Postgres+PostGIS**.
+- **TODO (see build plan):** real SMS provider, media upload + pHash, OTP-gated contact reveal,
+  moderation queue, map+list synced results UI, saved searches. Marked with `TODO` in code.
 
 ## Status
 🏗️ **Planning docs complete + MVP scaffold building.** See

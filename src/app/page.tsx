@@ -12,7 +12,7 @@ export default function HomePage() {
         <p>Verified listings. Responsive owners &amp; agents. No broker spam.</p>
       </div>
 
-      <form className="searchbar" action="/api/listings/search" method="get">
+      <form className="searchbar" action="/search" method="get">
         <input name="locality" placeholder={`Search locality in ${city} (e.g. Wakad, Baner)`} aria-label="Locality" />
         <select name="intent" aria-label="Intent" defaultValue="">
           <option value="">Buy or Rent</option>

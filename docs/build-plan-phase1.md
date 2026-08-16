@@ -13,10 +13,11 @@ product, and the enquiry appears in both dashboards.
 ## Week-by-week
 
 ### Week 1 — Foundations
-- [ ] Scaffold Next.js (App Router, TS) + API modules + Postgres/PostGIS (managed) + Prisma/SQL
-- [ ] Auth: phone-OTP request/verify → JWT session (`/auth/otp/*`, `/me`)
+- [x] Scaffold Next.js (App Router, TS) + API modules + Postgres/PostGIS + Prisma/SQL
+- [x] Auth: phone-OTP request/verify → JWT session cookie (`/auth/otp/*`, `/api/me`)
+- [x] Seed `cities` + `localities` for the launch city (+ sample listings; boundaries TODO)
+- [x] Local dev: docker-compose Postgres+PostGIS
 - [ ] CI: lint + typecheck + test; Sentry + PostHog wired
-- [ ] Seed `cities` + `localities` (with boundaries) for the launch city
 
 ### Week 2 — Listing creation (supply)
 - [ ] Listing data model + migrations (see `data-model.sql`)

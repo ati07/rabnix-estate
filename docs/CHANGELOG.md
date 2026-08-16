@@ -6,6 +6,8 @@ its header — see [docs/README.md](./README.md) for the convention.
 
 ## [Unreleased]
 - _Pending: target city, team size, and seeding channel decisions (PRD §7)._
+- Week 1 build (branch `feat/week1-auth-search`): JWT session cookie + `/api/me`, search results
+  page, sample-listings seed, docker-compose Postgres+PostGIS. See `build-plan-phase1.md` Week 1.
 
 ## 2026-08-16 (later)
 ### Added

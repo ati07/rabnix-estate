@@ -8,7 +8,7 @@ import type { Prisma } from "@prisma/client";
 
 export const SearchParams = z.object({
   intent: z.enum(["sale", "rent"]).optional(),
-  localityId: z.string().uuid().optional(),
+  localityId: z.string().min(1).optional(),
   propertyType: z
     .enum(["apartment", "independent_house", "villa", "plot", "commercial", "pg"])
     .optional(),
