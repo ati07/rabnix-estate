@@ -31,8 +31,10 @@ product, and the enquiry appears in both dashboards.
 
 ### Week 3 — Search & detail (demand)
 - [ ] Search API: locality + filters + `bbox`, Postgres FTS + PostGIS (no search engine yet)
-- [ ] Results UI: synced map + list, bottom-sheet filters (mobile-first)
-- [ ] Locality autocomplete (pg_trgm, typo-tolerant, "near me")
+- [x] Results UI: synced map + list (Leaflet + OSM, price-bubble pins, hover/click sync,
+      load-more pagination) + a filter/sort bar (intent, type, BHK, price, sort)
+- [x] Locality autocomplete (typo-tolerant, `/api/localities/search`). In-memory ranking
+      (prefix > substring > edit-distance ≤2) over the small locality set; pg_trgm is the upgrade path.
 - [ ] Listing detail: gallery, key facts, amenities, map, similar
 
 ### Week 4 — Contact loop + moderation

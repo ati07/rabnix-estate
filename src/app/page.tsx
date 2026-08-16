@@ -1,7 +1,6 @@
-// Landing + search entry. The search form GETs /api/listings/search.
-// This is a deliberately minimal server component; the mobile-first map+list results
-// UI (bottom-sheet filters, synced map) is Week 3 work — see docs/build-plan-phase1.md.
+import { LocalitySearch } from "./search/LocalitySearch";
 
+// Landing + search entry. The search form GETs /search (which renders the synced map+list).
 const city = process.env.NEXT_PUBLIC_DEFAULT_CITY ?? "your city";
 
 export default function HomePage() {
@@ -13,7 +12,7 @@ export default function HomePage() {
       </div>
 
       <form className="searchbar" action="/search" method="get">
-        <input name="locality" placeholder={`Search locality in ${city} (e.g. Wakad, Baner)`} aria-label="Locality" />
+        <LocalitySearch placeholder={`Search locality in ${city} (e.g. Wakad, Baner)`} />
         <select name="intent" aria-label="Intent" defaultValue="">
           <option value="">Buy or Rent</option>
           <option value="sale">Buy</option>

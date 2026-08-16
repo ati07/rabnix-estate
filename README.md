@@ -49,8 +49,11 @@ Postgres. Without a database the UI still renders; API routes return a clear "da
 configured" error.
 
 ### Local testing — what to try
-1. **Search UI:** open http://localhost:3000, search locality `Wakad`/`Baner`/`Hinjewadi`/`Kharadi`
-   → results grid → click a card → SSR listing detail.
+1. **Search UI:** open http://localhost:3000, type a locality — the box **autocompletes** (typo
+   tolerant: `Wakhad`→Wakad, `Hinjawadi`→Hinjewadi). Results open at `/search` as a **synced
+   map + list** (Leaflet/OSM price-bubble pins; hover a card to highlight its pin, click a pin to
+   jump to the card) with a **filter/sort bar** (intent, type, BHK, price, sort) and **Load more**
+   pagination. Click a card → SSR listing detail.
 2. **Search API:** `GET http://localhost:3000/api/listings/search?intent=rent&bhk=2`
 3. **Sign in / register:** open **/login** → "Create account" (email + password; pick buyer or
    owner) → you're signed in (nav shows your name + **Log out**). API equivalent:
@@ -90,21 +93,21 @@ for TDD. GitHub Actions ([.github/workflows/ci.yml](./.github/workflows/ci.yml))
 **lint + typecheck + test** on every push to `main` and every PR.
 
 ### Verified
-- `npm run lint` ✅ · `npm run typecheck` ✅ · `npm test` ✅ (21 tests) · `npm run build` ✅.
+- `npm run lint` ✅ · `npm run typecheck` ✅ · `npm test` ✅ (30 tests) · `npm run build` ✅.
 
 ### Implemented vs. TODO
 - **Wired:** **email + password auth** (`/login` — register/login/logout, JWT session cookie +
   `/api/me`), phone-OTP request/verify (dev stub) + dev-login (both kept for later),
   **post-a-listing UI** (`/post` → draft → submit for review), **media pipeline** (upload → EXIF
   strip → WebP + blur placeholder → pHash/dup-reject; gallery + search thumbnails), **moderation
-  queue** (`/admin/moderation` — submit → pending → approve/reject + reason, auto-flags), listing
-  search (filters + cursor pagination), search results page, listing detail (SSR),
-  **contact → enquiry + phone reveal**, **dashboard** (`/dashboard` — lister: my listings +
+  queue** (`/admin/moderation` — submit → pending → approve/reject + reason, auto-flags),
+  **search UX** (locality autocomplete + synced Leaflet map/list + filter-sort bar + load-more
+  pagination), listing detail (SSR), **contact → enquiry + phone reveal**, **dashboard** (`/dashboard` — lister: my listings +
   enquiries received + respond; buyer: **saved homes** + enquiries I've sent), **auto-expiry job**
   (`/api/cron/expire-listings`), landing search UI, sample-data seed.
 - **TODO (see build plan):** real SMS/OTP login, real CDN for media, price-outlier/keyword-spam
-  auto-flags, map+list synced results UI, buyer dashboard, saved searches. Marked with `TODO`
-  in code.
+  auto-flags, PostGIS bbox/radius search + pg_trgm autocomplete, saved-search alerts, SEO baseline
+  (sitemap/schema.org). Marked with `TODO` in code.
 
 ## Status
 🏗️ **Planning docs complete + MVP scaffold building.** See
