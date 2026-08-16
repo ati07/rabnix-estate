@@ -3,6 +3,7 @@ import { ok, fail } from "@/lib/http";
 import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/auth";
 import { contactLimiter, clientIp } from "@/lib/rateLimit";
+import { trackEvent } from "@/lib/observability";
 
 // POST /api/listings/:id/contact  { channel?, message? } → 200 { phone } | 401
 // Records an enquiry (North Star metric) and reveals the lister's phone.
@@ -29,6 +30,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   await prisma.enquiry.create({
     data: { listingId: id, buyerId: user.id, channel: data.channel, message: data.message },
   });
+
+  // North Star funnel event — an enquiry is the core conversion we optimize for.
+  trackEvent("enquiry_created", { listingId: id, userId: user.id, channel: data.channel });
 
   return ok({ phone: listing.owner.phone });
 }
