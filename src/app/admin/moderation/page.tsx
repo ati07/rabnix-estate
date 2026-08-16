@@ -22,17 +22,30 @@ export default async function ModerationPage() {
   let pending: Awaited<ReturnType<typeof loadPending>>;
   let otherMedia: OtherMedia[];
   let ownerCounts: Map<string, number>;
+  let localityPrices: Map<string, number[]>; // `${localityId}|${intent}` → comparable live prices
   try {
     pending = await loadPending();
     const pendingIds = new Set(pending.map((l) => l.id));
 
-    // Photos on *other* listings (dup-image detection) + per-owner listing counts (one-phone-many).
-    const [media, grouped] = await Promise.all([
+    // Photos on *other* listings (dup-image detection), per-owner listing counts (one-phone-many),
+    // and comparable live prices per locality+intent (price-outlier).
+    const [media, grouped, live] = await Promise.all([
       prisma.listingMedia.findMany({ select: { listingId: true, phash: true } }),
       prisma.listing.groupBy({ by: ["ownerId"], _count: { _all: true } }),
+      prisma.listing.findMany({
+        where: { status: "live", localityId: { not: null } },
+        select: { localityId: true, intent: true, price: true },
+      }),
     ]);
     otherMedia = media.filter((m) => !pendingIds.has(m.listingId));
     ownerCounts = new Map(grouped.map((g) => [g.ownerId, g._count._all]));
+    localityPrices = new Map();
+    for (const l of live) {
+      const key = `${l.localityId}|${l.intent}`;
+      const arr = localityPrices.get(key) ?? [];
+      arr.push(Number(l.price));
+      localityPrices.set(key, arr);
+    }
   } catch {
     return (
       <div className="notice">
@@ -53,7 +66,12 @@ export default async function ModerationPage() {
       ) : (
         <ul className="enquiry-list">
           {pending.map((l) => {
-            const flags = flagsForListing(l.media, otherMedia, ownerCounts.get(l.ownerId) ?? 0);
+            const flags = flagsForListing(l.media, otherMedia, ownerCounts.get(l.ownerId) ?? 0, {
+              price: Number(l.price),
+              localityPrices: l.localityId ? localityPrices.get(`${l.localityId}|${l.intent}`) : undefined,
+              title: l.title,
+              description: l.description,
+            });
             const primary = [...l.media].sort((a, b) => a.ord - b.ord)[0];
             return (
               <li className="card" key={l.id}>

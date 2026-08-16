@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { flagsForListing } from "./moderation";
+import { flagsForListing, median, priceOutlierFlag, spamFlags } from "./moderation";
 
 describe("flagsForListing", () => {
   const hash = "0f0f0f0f0f0f0f0f";
@@ -52,5 +52,67 @@ describe("flagsForListing", () => {
   it("can raise both flags at once", () => {
     const flags = flagsForListing([{ phash: hash }], [{ listingId: "o", phash: hash }], 6);
     expect(flags).toEqual(["Duplicate image", "One phone → 6 listings"]);
+  });
+
+  it("flags a price outlier via context", () => {
+    const flags = flagsForListing([{ phash: hash }], [], 1, {
+      price: 100,
+      localityPrices: [1000, 1100, 900, 1050],
+    });
+    expect(flags.some((f) => f.startsWith("Price outlier"))).toBe(true);
+  });
+
+  it("flags spammy text via context", () => {
+    const flags = flagsForListing([{ phash: hash }], [], 1, {
+      description: "Genuine buyers only, no broker. Call 9876543210 now!",
+    });
+    expect(flags).toContain("Contact info in text");
+    expect(flags).toContain("Spam keywords");
+  });
+});
+
+describe("median", () => {
+  it("handles odd and even lengths", () => {
+    expect(median([3, 1, 2])).toBe(2);
+    expect(median([4, 1, 3, 2])).toBe(2.5);
+  });
+  it("is NaN for an empty list", () => {
+    expect(Number.isNaN(median([]))).toBe(true);
+  });
+});
+
+describe("priceOutlierFlag", () => {
+  const comps = [1000, 1100, 900, 1050]; // median 1025
+
+  it("flags a suspiciously low price", () => {
+    expect(priceOutlierFlag(300, comps)).toMatch(/Price outlier/);
+  });
+  it("flags a suspiciously high price", () => {
+    expect(priceOutlierFlag(3000, comps)).toMatch(/Price outlier/);
+  });
+  it("does not flag a normal price", () => {
+    expect(priceOutlierFlag(1000, comps)).toBeNull();
+  });
+  it("stays silent without enough comparables", () => {
+    expect(priceOutlierFlag(1, [1000, 1000, 1000])).toBeNull();
+  });
+  it("stays silent when price is missing", () => {
+    expect(priceOutlierFlag(undefined, comps)).toBeNull();
+  });
+});
+
+describe("spamFlags", () => {
+  it("flags a phone number in the text", () => {
+    expect(spamFlags(null, "Reach me at 98765 43210")).toContain("Contact info in text");
+  });
+  it("flags an email or URL", () => {
+    expect(spamFlags("Deal", "mail me@x.com")).toContain("Contact info in text");
+    expect(spamFlags(null, "see www.example.com")).toContain("Contact info in text");
+  });
+  it("flags spam phrases case-insensitively", () => {
+    expect(spamFlags("URGENT SALE", null)).toContain("Spam keywords");
+  });
+  it("returns nothing for clean text", () => {
+    expect(spamFlags("Sunny 2 BHK", "Bright home near the park.")).toEqual([]);
   });
 });

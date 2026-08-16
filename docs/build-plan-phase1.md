@@ -45,7 +45,8 @@ product, and the enquiry appears in both dashboards.
 - [x] Dashboard (`/dashboard`): lister side (my listings + enquiries received, respond → sets
       `lister_responded_at`) **and** buyer side (saved homes via the Favorite model + enquiries I've sent)
 - [x] Internal moderation queue (`/admin/moderation`, admin-only): submit → pending → approve/reject
-      + reason; auto-flags (dup pHash, one phone→many) computed on the fly. Price-outlier/keyword-spam TODO.
+      + reason; auto-flags computed on the fly — dup pHash, one phone→many, **price-outlier**
+      (vs locality+intent median) and **spam text** (off-platform contact info + spam phrases).
 - [x] SEO baseline: SSR listing pages + per-listing `generateMetadata` (title/description/OG) +
       schema.org JSON-LD; `sitemap.xml` (listings + per-locality search) + `robots.txt`
 

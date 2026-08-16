@@ -80,7 +80,8 @@ configured" error.
 7. **Moderation queue:** posting now submits a listing as `pending` (awaits review, not yet public).
    Dev-login as an **admin** (`POST /api/dev/login {"role":"admin"}`) → the nav shows **Moderation**
    → open **/admin/moderation** to see pending listings with photos, key facts, and auto-flags
-   (duplicate image via pHash, one-phone-many). **Approve** → the listing goes `live` and appears in
+   (duplicate image via pHash, one-phone-many, price-outlier vs the locality median, spam text with
+   off-platform contact info). **Approve** → the listing goes `live` and appears in
    search; **Reject** with a reason → owner sees the reason on their dashboard.
 8. **Auto-expiry:** listings carry an `expiresAt` (~45 days). `POST /api/cron/expire-listings` flips
    any `live` listing past its expiry to `expired` (returns `{ expired: n }`); search also hides
@@ -96,7 +97,7 @@ for TDD. GitHub Actions ([.github/workflows/ci.yml](./.github/workflows/ci.yml))
 **lint + typecheck + test** on every push to `main` and every PR.
 
 ### Verified
-- `npm run lint` ✅ · `npm run typecheck` ✅ · `npm test` ✅ (35 tests) · `npm run build` ✅.
+- `npm run lint` ✅ · `npm run typecheck` ✅ · `npm test` ✅ (48 tests) · `npm run build` ✅.
 
 ### Implemented vs. TODO
 - **Wired:** **email + password auth** (`/login` — register/login/logout, JWT session cookie +
@@ -110,9 +111,9 @@ for TDD. GitHub Actions ([.github/workflows/ci.yml](./.github/workflows/ci.yml))
   schema.org JSON-LD, `sitemap.xml`, `robots.txt`), **contact → enquiry + phone reveal**, **dashboard** (`/dashboard` — lister: my listings +
   enquiries received + respond; buyer: **saved homes** + enquiries I've sent), **auto-expiry job**
   (`/api/cron/expire-listings`), landing search UI, sample-data seed.
-- **TODO (see build plan):** real SMS/OTP login, real CDN for media, price-outlier/keyword-spam
-  auto-flags, PostGIS bbox/radius search + pg_trgm autocomplete, saved-search alerts,
-  listing-detail enrichment (amenities, mini-map, similar). Marked with `TODO` in code.
+- **TODO (see build plan):** real SMS/OTP login, real CDN for media, PostGIS bbox/radius search +
+  pg_trgm autocomplete, saved-search alerts, anti-fraud scoring + rate limits. Marked with `TODO`
+  in code.
 
 ## Status
 🏗️ **Planning docs complete + MVP scaffold building.** See
