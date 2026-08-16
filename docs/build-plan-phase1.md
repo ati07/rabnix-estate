@@ -37,7 +37,8 @@ product, and the enquiry appears in both dashboards.
 - [x] Contact reveal + enquiry create (`call`/`form`/`whatsapp`) — dev-login stands in for OTP
 - [ ] Swap dev-login for real OTP gating on contact reveal
 - [x] Lister dashboard (`/dashboard`): my listings + enquiries received, respond → sets `lister_responded_at` (buyer dashboard TODO)
-- [ ] Internal moderation queue: approve/reject + reason; auto-flag rules (dup pHash, one phone→many)
+- [x] Internal moderation queue (`/admin/moderation`, admin-only): submit → pending → approve/reject
+      + reason; auto-flags (dup pHash, one phone→many) computed on the fly. Price-outlier/keyword-spam TODO.
 - [ ] SEO baseline: SSR listing/locality pages, schema.org, sitemap
 
 ### Weeks 5–6 — Harden & seed

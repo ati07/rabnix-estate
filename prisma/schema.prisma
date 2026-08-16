@@ -113,6 +113,9 @@ model Listing {
   lat          Float
   lng          Float
   qualityScore Decimal        @default(0) @db.Decimal(4, 2)
+  moderationReason String?    // reject reason, surfaced to the owner
+  moderatedAt   DateTime?     // when an admin approved/rejected
+  moderatedById String?       // admin User.id who decided (plain id — no relation)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   expiresAt    DateTime       // structural freshness — auto-expire ~45 days

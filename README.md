@@ -70,7 +70,12 @@ configured" error.
 6. **Lister dashboard:** as the owner, open **/dashboard** → see your listings (status + enquiry
    counts) and enquiries received → **Mark responded** on an enquiry (sets `listerRespondedAt`, the
    response-rate guardrail).
-7. **Phone-OTP (deferred, optional):** `POST /api/auth/otp/request` then `/verify` — the code prints
+7. **Moderation queue:** posting now submits a listing as `pending` (awaits review, not yet public).
+   Dev-login as an **admin** (`POST /api/dev/login {"role":"admin"}`) → the nav shows **Moderation**
+   → open **/admin/moderation** to see pending listings with photos, key facts, and auto-flags
+   (duplicate image via pHash, one-phone-many). **Approve** → the listing goes `live` and appears in
+   search; **Reject** with a reason → owner sees the reason on their dashboard.
+8. **Phone-OTP (deferred, optional):** `POST /api/auth/otp/request` then `/verify` — the code prints
    to the `npm run dev` console (dev stub). Real SMS-OTP login lands later.
 
 ### Verified
@@ -80,13 +85,14 @@ configured" error.
 ### Implemented vs. TODO
 - **Wired:** **email + password auth** (`/login` — register/login/logout, JWT session cookie +
   `/api/me`), phone-OTP request/verify (dev stub) + dev-login (both kept for later),
-  **post-a-listing UI** (`/post` → draft → publish), **media pipeline** (upload → EXIF strip →
-  WebP + blur placeholder → pHash/dup-reject; gallery + search thumbnails), listing search
-  (filters + cursor pagination), search results page, listing detail (SSR),
+  **post-a-listing UI** (`/post` → draft → submit for review), **media pipeline** (upload → EXIF
+  strip → WebP + blur placeholder → pHash/dup-reject; gallery + search thumbnails), **moderation
+  queue** (`/admin/moderation` — submit → pending → approve/reject + reason, auto-flags), listing
+  search (filters + cursor pagination), search results page, listing detail (SSR),
   **contact → enquiry + phone reveal**, **lister dashboard** (`/dashboard` — my listings +
   enquiries received + respond), landing search UI, sample-data seed.
-- **TODO (see build plan):** real SMS/OTP login, real CDN for media + cross-listing dup moderation,
-  moderation queue, map+list synced results UI, buyer dashboard, saved searches. Marked with `TODO`
+- **TODO (see build plan):** real SMS/OTP login, real CDN for media, price-outlier/keyword-spam
+  auto-flags, map+list synced results UI, buyer dashboard, saved searches. Marked with `TODO`
   in code.
 
 ## Status

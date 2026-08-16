@@ -66,6 +66,10 @@ export default async function DashboardPage() {
                 {l.locality?.name ?? "—"} · <span className={`badge badge-${l.status}`}>{l.status}</span> ·{" "}
                 {l._count.enquiries} enquir{l._count.enquiries === 1 ? "y" : "ies"}
               </p>
+              {l.status === "pending" && <p className="meta">⏳ Awaiting moderator review.</p>}
+              {l.status === "rejected" && l.moderationReason && (
+                <p className="error">Rejected: {l.moderationReason}</p>
+              )}
             </div>
           ))}
         </div>

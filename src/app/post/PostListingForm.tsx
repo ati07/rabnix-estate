@@ -71,11 +71,12 @@ export function PostListingForm({ localities }: { localities: Locality[] }) {
 
       const pub = await fetch(`/api/listings/${listing.id}/submit`, { method: "POST" });
       if (!pub.ok) {
-        setError("Draft created but publishing failed.");
+        setError("Draft created but submission failed.");
         setBusy(false);
         return;
       }
-      router.push(`/listings/${listing.id}`);
+      // Submitted listings await moderator approval (not yet public), so land on the dashboard.
+      router.push("/dashboard");
     } catch {
       setError("Network error.");
       setBusy(false);
@@ -172,7 +173,7 @@ export function PostListingForm({ localities }: { localities: Locality[] }) {
         </Link>
       )}
       <button className="btn" type="submit" disabled={busy}>
-        {busy ? "Publishing…" : "Publish listing"}
+        {busy ? "Submitting…" : "Submit for review"}
       </button>
     </form>
   );
