@@ -17,6 +17,11 @@ its header — see [docs/README.md](./README.md) for the convention.
 - Lister dashboard (`/dashboard`): my listings (status + enquiry counts) and enquiries received;
   "Mark responded" (`POST /api/enquiries/:id/respond`) sets `listerRespondedAt` (response-rate
   guardrail). Ownership-enforced (non-owner → 403). Verified end-to-end on local DB.
+- Email + password auth (`/login`, `POST /api/auth/register|login|logout`): bcrypt password hashes,
+  same JWT session cookie. `User.phone` now optional; added `User.passwordHash`. Nav reflects
+  signed-in state + log out. Contact/post/dashboard now link to `/login` instead of dev-login.
+  OTP/SMS login stays deferred. Verified: register → session, login, logout, bad-password 401,
+  duplicate-email 409.
 
 ## 2026-08-16 (later)
 ### Added

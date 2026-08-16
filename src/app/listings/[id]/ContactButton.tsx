@@ -1,12 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-// Contact reveal: posts an enquiry then shows the lister's phone. In production this is
-// OTP-gated (login required); locally use POST /api/dev/login first to get a session.
+// Contact reveal: posts an enquiry then shows the lister's phone. Requires a session —
+// if none, we prompt the visitor to sign in (email + password; OTP added later).
 export function ContactButton({ listingId }: { listingId: string }) {
+  const pathname = usePathname();
   const [phone, setPhone] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [needLogin, setNeedLogin] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function contact() {
@@ -22,7 +26,7 @@ export function ContactButton({ listingId }: { listingId: string }) {
         const data = (await res.json()) as { phone: string };
         setPhone(data.phone);
       } else if (res.status === 401) {
-        setError("Log in to see contact details (dev: POST /api/dev/login).");
+        setNeedLogin(true);
       } else {
         setError("Could not fetch contact details.");
       }
@@ -40,6 +44,11 @@ export function ContactButton({ listingId }: { listingId: string }) {
       <button className="btn" onClick={contact} disabled={loading}>
         {loading ? "…" : "Contact lister"}
       </button>
+      {needLogin && (
+        <p className="meta">
+          <Link href={`/login?redirect=${encodeURIComponent(pathname)}`}>Sign in</Link> to see contact details.
+        </p>
+      )}
       {error && <p className="meta">{error}</p>}
     </div>
   );

@@ -80,9 +80,10 @@ model Locality {
 
 model User {
   id            String    @id @default(uuid())
-  phone         String    @unique
+  phone         String?   @unique
   phoneVerified Boolean   @default(false)
   email         String?   @unique
+  passwordHash  String?   // email + password login; OTP/SMS added later
   fullName      String?
   role          UserRole  @default(buyer)
   createdAt     DateTime  @default(now())

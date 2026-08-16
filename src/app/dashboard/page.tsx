@@ -14,9 +14,7 @@ export default async function DashboardPage() {
   if (!user) {
     return (
       <div className="notice">
-        Log in to see your dashboard. Dev shortcut:{" "}
-        <code>POST /api/dev/login {'{"role":"owner"}'}</code>, then reload — or open{" "}
-        <Link href="/post">/post</Link> and use “Log in as owner (dev)”.
+        <Link href="/login?redirect=/dashboard">Sign in</Link> to see your listings and enquiries.
       </div>
     );
   }

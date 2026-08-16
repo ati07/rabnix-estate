@@ -1,27 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type Locality = { id: string; name: string };
 
-// Create + publish a listing. OTP is skipped locally: if not logged in, the form offers
-// a one-click dev-login as an owner. Location is derived from the chosen locality.
+// Create + publish a listing. Requires a session; if not signed in, the form prompts the
+// visitor to sign in (email + password). Location is derived from the chosen locality.
 export function PostListingForm({ localities }: { localities: Locality[] }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [needLogin, setNeedLogin] = useState(false);
   const [busy, setBusy] = useState(false);
-
-  async function devLoginOwner() {
-    await fetch("/api/dev/login", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ role: "owner" }),
-    });
-    setNeedLogin(false);
-    setError(null);
-  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -52,7 +43,7 @@ export function PostListingForm({ localities }: { localities: Locality[] }) {
       });
       if (res.status === 401) {
         setNeedLogin(true);
-        setError("Log in as an owner to post (dev-login below).");
+        setError("Sign in to post a property.");
         setBusy(false);
         return;
       }
@@ -155,9 +146,9 @@ export function PostListingForm({ localities }: { localities: Locality[] }) {
 
       {error && <p className="error">{error}</p>}
       {needLogin && (
-        <button type="button" className="btn" onClick={devLoginOwner}>
-          Log in as owner (dev)
-        </button>
+        <Link className="btn" href="/login?redirect=/post&mode=register">
+          Sign in to continue
+        </Link>
       )}
       <button className="btn" type="submit" disabled={busy}>
         {busy ? "Publishing…" : "Publish listing"}

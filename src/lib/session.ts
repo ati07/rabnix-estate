@@ -8,10 +8,10 @@ const secret = new TextEncoder().encode(process.env.JWT_SECRET ?? "dev-secret-ch
 export const SESSION_COOKIE = "rabnix_session";
 export const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
-export type SessionClaims = JWTPayload & { sub: string; phone: string };
+export type SessionClaims = JWTPayload & { sub: string; phone?: string | null };
 
-export async function createSession(claims: { sub: string; phone: string }): Promise<string> {
-  return new SignJWT(claims)
+export async function createSession(claims: { sub: string; phone?: string | null }): Promise<string> {
+  return new SignJWT({ sub: claims.sub, phone: claims.phone ?? undefined })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("30d")

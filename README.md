@@ -52,34 +52,35 @@ configured" error.
 1. **Search UI:** open http://localhost:3000, search locality `Wakad`/`Baner`/`Hinjewadi`/`Kharadi`
    → results grid → click a card → SSR listing detail.
 2. **Search API:** `GET http://localhost:3000/api/listings/search?intent=rent&bhk=2`
-3. **Contact loop (OTP skipped via dev-login):**
+3. **Sign in / register:** open **/login** → "Create account" (email + password; pick buyer or
+   owner) → you're signed in (nav shows your name + **Log out**). API equivalent:
    ```bash
-   # log in without OTP (dev only) → sets httpOnly session cookie
-   curl -X POST localhost:3000/api/dev/login -H "content-type: application/json" -d "{\"role\":\"buyer\"}" -c cookies.txt
+   # register (or /api/auth/login with an existing account) → sets httpOnly session cookie
+   curl -X POST localhost:3000/api/auth/register -H "content-type: application/json" -d "{\"email\":\"me@test.com\",\"password\":\"secret123\",\"role\":\"buyer\"}" -c cookies.txt
    curl localhost:3000/api/me -b cookies.txt
-   # contact a listing → records an enquiry, reveals the lister's phone
-   curl -X POST localhost:3000/api/listings/seed-listing-1/contact -H "content-type: application/json" -d "{\"channel\":\"call\"}" -b cookies.txt
    ```
-   In the browser: open a listing → **Contact lister** (call `/api/dev/login` once first for a session).
-5. **Post a property:** open **/post** → click "Log in as owner (dev)" if prompted → fill the form →
-   **Publish** → you land on the new live listing, which now appears in search.
-6. **Lister dashboard:** log in as owner (dev) → open **/dashboard** → see your listings (status +
-   enquiry counts) and enquiries received → **Mark responded** on an enquiry (sets
-   `listerRespondedAt`, the response-rate guardrail).
-4. **Real OTP (optional):** `POST /api/auth/otp/request` then `/verify` — the code prints to the
-   `npm run dev` server console (dev stub). Create a listing draft via `POST /api/listings`.
+4. **Contact loop:** signed in, open a listing → **Contact lister** → records an enquiry and reveals
+   the lister's phone (`POST /api/listings/:id/contact`).
+5. **Post a property:** signed in as an owner, open **/post** → fill the form → **Publish** → you land
+   on the new live listing, which now appears in search.
+6. **Lister dashboard:** as the owner, open **/dashboard** → see your listings (status + enquiry
+   counts) and enquiries received → **Mark responded** on an enquiry (sets `listerRespondedAt`, the
+   response-rate guardrail).
+7. **Phone-OTP (deferred, optional):** `POST /api/auth/otp/request` then `/verify` — the code prints
+   to the `npm run dev` console (dev stub). Real SMS-OTP login lands later.
 
 ### Verified
 - `npm run typecheck` ✅ · `npm run build` ✅ (7 routes compile: landing, listing detail, OTP
   request/verify, listings create, listings search).
 
 ### Implemented vs. TODO
-- **Wired:** phone-OTP request/verify (dev stub), **dev-login (skip OTP)**, JWT session cookie +
-  `/api/me`, **post-a-listing UI** (`/post` → draft → publish), listing search (filters + cursor
+- **Wired:** **email + password auth** (`/login` — register/login/logout, JWT session cookie +
+  `/api/me`), phone-OTP request/verify (dev stub) + dev-login (both kept for later),
+  **post-a-listing UI** (`/post` → draft → publish), listing search (filters + cursor
   pagination), search results page, listing detail (SSR), **contact → enquiry + phone reveal**,
   **lister dashboard** (`/dashboard` — my listings + enquiries received + respond),
   landing search UI, sample-data seed.
-- **TODO (see build plan):** real SMS/OTP gating, media upload + pHash, moderation queue, map+list
+- **TODO (see build plan):** real SMS/OTP login, media upload + pHash, moderation queue, map+list
   synced results UI, buyer dashboard, saved searches. Marked with `TODO` in code.
 
 ## Status

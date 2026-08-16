@@ -14,7 +14,8 @@ product, and the enquiry appears in both dashboards.
 
 ### Week 1 — Foundations
 - [x] Scaffold Next.js (App Router, TS) + API modules + Postgres/PostGIS + Prisma/SQL
-- [x] Auth: phone-OTP request/verify → JWT session cookie (`/auth/otp/*`, `/api/me`)
+- [x] Auth: email + password register/login/logout → JWT session cookie (`/api/auth/*`, `/api/me`).
+      Phone-OTP stub also wired (`/auth/otp/*`); real SMS-OTP login is deferred (Week 4).
 - [x] Seed `cities` + `localities` for the launch city (+ sample listings; boundaries TODO)
 - [x] Local dev: plain Postgres (local install or managed Neon/Supabase) — no Docker needed
 - [ ] CI: lint + typecheck + test; Sentry + PostHog wired
