@@ -14,6 +14,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="site-header">
           <Link className="brand" href="/">Rabnix Estate</Link>
           <span className="tagline">Trust-first home search</span>
+          <nav className="site-nav">
+            <Link href="/post">Post a property</Link>
+          </nav>
         </header>
         <main className="container">{children}</main>
         <footer className="site-footer">

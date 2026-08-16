@@ -1,34 +1,64 @@
 import { z } from "zod";
 import { ok, fail } from "@/lib/http";
 import { prisma } from "@/lib/db";
+import { getSessionUser } from "@/lib/auth";
 
-// Minimal create-listing handler (draft). Auth (owner) + media upload + moderation
-// submit are TODO — see docs/build-plan-phase1.md Week 2.
+// POST /api/listings → 201 { listing } (status=draft). Auth: any logged-in user (owner/agent).
+// Location comes from the chosen locality's centroid until the map picker lands (Week 3).
 const Body = z.object({
-  ownerId: z.string().uuid(),
   intent: z.enum(["sale", "rent"]),
   propertyType: z.enum(["apartment", "independent_house", "villa", "plot", "commercial", "pg"]),
-  price: z.number().positive(),
-  lat: z.number(),
-  lng: z.number(),
+  price: z.coerce.number().positive(),
   localityId: z.string().min(1).optional(),
-  bedrooms: z.number().int().min(0).max(20).optional(),
-  areaSqft: z.number().int().positive().optional(),
+  lat: z.coerce.number().optional(),
+  lng: z.coerce.number().optional(),
+  bedrooms: z.coerce.number().int().min(0).max(20).optional(),
+  bathrooms: z.coerce.number().int().min(0).max(20).optional(),
+  areaSqft: z.coerce.number().int().positive().optional(),
+  furnishing: z.enum(["unfurnished", "semi_furnished", "furnished"]).optional(),
   title: z.string().max(140).optional(),
   description: z.string().max(5000).optional(),
 });
 
-// POST /api/listings → 201 { listing } (status=draft)
 export async function POST(req: Request) {
+  const user = await getSessionUser();
+  if (!user) return fail("UNAUTHENTICATED", "Log in to post a listing", 401);
+
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return fail("VALIDATION_ERROR", "Invalid listing", 400);
-
   const d = parsed.data;
-  const expiresAt = new Date(Date.now() + 45 * 24 * 60 * 60 * 1000); // structural freshness
 
   try {
+    let { lat, lng } = d;
+    if ((lat == null || lng == null) && d.localityId) {
+      const loc = await prisma.locality.findUnique({ where: { id: d.localityId } });
+      lat = lat ?? loc?.lat ?? undefined;
+      lng = lng ?? loc?.lng ?? undefined;
+    }
+    if (lat == null || lng == null) {
+      return fail("VALIDATION_ERROR", "Location required — pick a locality", 400, {
+        localityId: "required",
+      });
+    }
+
     const listing = await prisma.listing.create({
-      data: { ...d, status: "draft", expiresAt },
+      data: {
+        ownerId: user.id,
+        intent: d.intent,
+        propertyType: d.propertyType,
+        price: d.price,
+        localityId: d.localityId,
+        lat,
+        lng,
+        bedrooms: d.bedrooms,
+        bathrooms: d.bathrooms,
+        areaSqft: d.areaSqft,
+        furnishing: d.furnishing,
+        title: d.title,
+        description: d.description,
+        status: "draft",
+        expiresAt: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
+      },
     });
     return ok({ listing }, 201);
   } catch {

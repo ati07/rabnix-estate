@@ -61,6 +61,8 @@ configured" error.
    curl -X POST localhost:3000/api/listings/seed-listing-1/contact -H "content-type: application/json" -d "{\"channel\":\"call\"}" -b cookies.txt
    ```
    In the browser: open a listing → **Contact lister** (call `/api/dev/login` once first for a session).
+5. **Post a property:** open **/post** → click "Log in as owner (dev)" if prompted → fill the form →
+   **Publish** → you land on the new live listing, which now appears in search.
 4. **Real OTP (optional):** `POST /api/auth/otp/request` then `/verify` — the code prints to the
    `npm run dev` server console (dev stub). Create a listing draft via `POST /api/listings`.
 
@@ -70,10 +72,11 @@ configured" error.
 
 ### Implemented vs. TODO
 - **Wired:** phone-OTP request/verify (dev stub), **dev-login (skip OTP)**, JWT session cookie +
-  `/api/me`, listing create (draft), listing search (filters + cursor pagination), search results
-  page, listing detail (SSR), **contact → enquiry + phone reveal**, landing search UI, sample-data seed.
-- **TODO (see build plan):** real SMS/OTP gating, media upload + pHash, moderation queue, post-a-
-  listing UI, map+list synced results UI, saved searches. Marked with `TODO` in code.
+  `/api/me`, **post-a-listing UI** (`/post` → draft → publish), listing search (filters + cursor
+  pagination), search results page, listing detail (SSR), **contact → enquiry + phone reveal**,
+  landing search UI, sample-data seed.
+- **TODO (see build plan):** real SMS/OTP gating, media upload + pHash, moderation queue, map+list
+  synced results UI, lister dashboard, saved searches. Marked with `TODO` in code.
 
 ## Status
 🏗️ **Planning docs complete + MVP scaffold building.** See

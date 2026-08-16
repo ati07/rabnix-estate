@@ -20,10 +20,10 @@ product, and the enquiry appears in both dashboards.
 - [ ] CI: lint + typecheck + test; Sentry + PostHog wired
 
 ### Week 2 — Listing creation (supply)
-- [ ] Listing data model + migrations (see `data-model.sql`)
-- [ ] Post flow: draft → attributes → map pin + locality → photos → submit (autosave, completeness meter)
+- [x] Listing data model + migrations (see `data-model.sql`)
+- [x] Post flow: `/post` form → draft → publish; location from locality (map pin, photos, autosave TODO)
 - [ ] Media pipeline: upload → responsive/WebP + blur placeholder → CDN; EXIF strip; pHash
-- [ ] `expires_at` auto-expiry job
+- [x] `expires_at` set on create (auto-expiry job TODO)
 
 ### Week 3 — Search & detail (demand)
 - [ ] Search API: locality + filters + `bbox`, Postgres FTS + PostGIS (no search engine yet)

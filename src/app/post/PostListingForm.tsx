@@ -1,0 +1,167 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+type Locality = { id: string; name: string };
+
+// Create + publish a listing. OTP is skipped locally: if not logged in, the form offers
+// a one-click dev-login as an owner. Location is derived from the chosen locality.
+export function PostListingForm({ localities }: { localities: Locality[] }) {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [needLogin, setNeedLogin] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  async function devLoginOwner() {
+    await fetch("/api/dev/login", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ role: "owner" }),
+    });
+    setNeedLogin(false);
+    setError(null);
+  }
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    const fd = new FormData(e.currentTarget);
+    const numOrUndef = (k: string) => (fd.get(k) ? Number(fd.get(k)) : undefined);
+    const strOrUndef = (k: string) => ((fd.get(k) as string) || undefined);
+
+    const body = {
+      intent: fd.get("intent"),
+      propertyType: fd.get("propertyType"),
+      localityId: strOrUndef("localityId"),
+      title: strOrUndef("title"),
+      description: strOrUndef("description"),
+      furnishing: strOrUndef("furnishing"),
+      price: numOrUndef("price"),
+      bedrooms: numOrUndef("bedrooms"),
+      bathrooms: numOrUndef("bathrooms"),
+      areaSqft: numOrUndef("areaSqft"),
+    };
+
+    try {
+      const res = await fetch("/api/listings", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (res.status === 401) {
+        setNeedLogin(true);
+        setError("Log in as an owner to post (dev-login below).");
+        setBusy(false);
+        return;
+      }
+      if (!res.ok) {
+        const err = (await res.json().catch(() => null)) as { error?: { message?: string } } | null;
+        setError(err?.error?.message ?? "Could not create listing.");
+        setBusy(false);
+        return;
+      }
+      const { listing } = (await res.json()) as { listing: { id: string } };
+      const pub = await fetch(`/api/listings/${listing.id}/submit`, { method: "POST" });
+      if (!pub.ok) {
+        setError("Draft created but publishing failed.");
+        setBusy(false);
+        return;
+      }
+      router.push(`/listings/${listing.id}`);
+    } catch {
+      setError("Network error.");
+      setBusy(false);
+    }
+  }
+
+  return (
+    <form className="form" onSubmit={onSubmit}>
+      <div className="row">
+        <label>
+          Listing type
+          <select name="intent" defaultValue="rent">
+            <option value="rent">Rent</option>
+            <option value="sale">Sale</option>
+          </select>
+        </label>
+        <label>
+          Property type
+          <select name="propertyType" defaultValue="apartment">
+            <option value="apartment">Apartment</option>
+            <option value="independent_house">Independent house</option>
+            <option value="villa">Villa</option>
+            <option value="plot">Plot</option>
+            <option value="commercial">Commercial</option>
+            <option value="pg">PG</option>
+          </select>
+        </label>
+      </div>
+
+      <label>
+        Locality
+        <select name="localityId" required defaultValue="">
+          <option value="" disabled>
+            Select a locality…
+          </option>
+          {localities.map((l) => (
+            <option key={l.id} value={l.id}>
+              {l.name}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label>
+        Title
+        <input name="title" placeholder="e.g. Bright 2 BHK near metro" maxLength={140} />
+      </label>
+
+      <div className="row">
+        <label>
+          Price
+          <input name="price" type="number" min="1" required placeholder="25000" />
+        </label>
+        <label>
+          BHK
+          <input name="bedrooms" type="number" min="0" max="20" placeholder="2" />
+        </label>
+      </div>
+
+      <div className="row">
+        <label>
+          Bathrooms
+          <input name="bathrooms" type="number" min="0" max="20" placeholder="2" />
+        </label>
+        <label>
+          Area (sqft)
+          <input name="areaSqft" type="number" min="1" placeholder="950" />
+        </label>
+        <label>
+          Furnishing
+          <select name="furnishing" defaultValue="semi_furnished">
+            <option value="unfurnished">Unfurnished</option>
+            <option value="semi_furnished">Semi-furnished</option>
+            <option value="furnished">Furnished</option>
+          </select>
+        </label>
+      </div>
+
+      <label>
+        Description
+        <textarea name="description" rows={4} placeholder="Key details buyers care about…" />
+      </label>
+
+      {error && <p className="error">{error}</p>}
+      {needLogin && (
+        <button type="button" className="btn" onClick={devLoginOwner}>
+          Log in as owner (dev)
+        </button>
+      )}
+      <button className="btn" type="submit" disabled={busy}>
+        {busy ? "Publishing…" : "Publish listing"}
+      </button>
+    </form>
+  );
+}

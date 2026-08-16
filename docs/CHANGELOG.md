@@ -11,6 +11,9 @@ its header — see [docs/README.md](./README.md) for the convention.
   See `build-plan-phase1.md` Week 1.
 - Contact loop: dev-login (`/api/dev/login`, skips OTP) + `/api/listings/:id/contact` records an
   enquiry and reveals the lister phone; wired into listing detail. Verified end-to-end on local DB.
+- Post-a-listing UI (`/post`): session-based create (`POST /api/listings`, no more ownerId in body)
+  + publish (`/api/listings/:id/submit`, dev auto-live / prod pending). Location derived from
+  locality. Verified: post → publish → appears in search.
 
 ## 2026-08-16 (later)
 ### Added
