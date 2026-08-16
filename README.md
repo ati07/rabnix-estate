@@ -67,9 +67,10 @@ configured" error.
    search. Re-uploading the same photo to a listing is rejected as a duplicate. Files land under
    `public/uploads/` in dev (gitignored); production swaps in an object store/CDN via
    `src/lib/storage.ts`.
-6. **Lister dashboard:** as the owner, open **/dashboard** → see your listings (status + enquiry
-   counts) and enquiries received → **Mark responded** on an enquiry (sets `listerRespondedAt`, the
-   response-rate guardrail).
+6. **Dashboard:** open **/dashboard**. As an owner you see your listings (status + enquiry counts)
+   and enquiries received → **Mark responded** (sets `listerRespondedAt`, the response-rate
+   guardrail). As a buyer you see **Saved homes** (tap **♡ Save** on any listing) and the enquiries
+   you've sent (with the lister's phone + whether they responded).
 7. **Moderation queue:** posting now submits a listing as `pending` (awaits review, not yet public).
    Dev-login as an **admin** (`POST /api/dev/login {"role":"admin"}`) → the nav shows **Moderation**
    → open **/admin/moderation** to see pending listings with photos, key facts, and auto-flags
@@ -98,8 +99,9 @@ for TDD. GitHub Actions ([.github/workflows/ci.yml](./.github/workflows/ci.yml))
   strip → WebP + blur placeholder → pHash/dup-reject; gallery + search thumbnails), **moderation
   queue** (`/admin/moderation` — submit → pending → approve/reject + reason, auto-flags), listing
   search (filters + cursor pagination), search results page, listing detail (SSR),
-  **contact → enquiry + phone reveal**, **lister dashboard** (`/dashboard` — my listings +
-  enquiries received + respond), landing search UI, sample-data seed.
+  **contact → enquiry + phone reveal**, **dashboard** (`/dashboard` — lister: my listings +
+  enquiries received + respond; buyer: **saved homes** + enquiries I've sent), **auto-expiry job**
+  (`/api/cron/expire-listings`), landing search UI, sample-data seed.
 - **TODO (see build plan):** real SMS/OTP login, real CDN for media, price-outlier/keyword-spam
   auto-flags, map+list synced results UI, buyer dashboard, saved searches. Marked with `TODO`
   in code.

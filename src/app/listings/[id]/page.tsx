@@ -1,7 +1,9 @@
 import Image from "next/image";
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
+import { getSessionUser } from "@/lib/auth";
 import { ContactButton } from "./ContactButton";
+import { FavoriteButton } from "./FavoriteButton";
 
 // Listing detail (server-rendered for SEO — docs/system-design.md §6).
 // Gallery/map/similar/contact-reveal are Week 3–4 work; this renders core facts.
@@ -21,6 +23,14 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
   }
 
   if (!listing || listing.status !== "live" || listing.expiresAt < new Date()) notFound();
+
+  const user = await getSessionUser();
+  const saved = user
+    ? !!(await prisma.favorite.findUnique({
+        where: { userId_listingId: { userId: user.id, listingId: listing.id } },
+        select: { userId: true },
+      }))
+    : false;
 
   const photos = [...listing.media].sort((a, b) => a.ord - b.ord);
 
@@ -53,8 +63,9 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
         {listing.locality?.name ?? "—"} · {listing.areaSqft ?? "—"} sqft · {listing.bathrooms ?? "—"} bath
       </p>
       {listing.description && <p>{listing.description}</p>}
-      <div style={{ marginTop: "1.25rem" }}>
+      <div style={{ marginTop: "1.25rem", display: "flex", gap: "0.6rem", alignItems: "center" }}>
         <ContactButton listingId={listing.id} />
+        <FavoriteButton listingId={listing.id} initialSaved={saved} isAuthed={!!user} />
       </div>
       {/* TODO: map, amenities, similar listings */}
     </article>
