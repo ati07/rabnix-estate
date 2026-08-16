@@ -30,5 +30,8 @@ Thumbs.db
 coverage/
 .nyc_output/
 
+# Claude Code — keep shared settings, ignore local/personal ones
+.claude/settings.local.json
+
 # Misc
 *.local
