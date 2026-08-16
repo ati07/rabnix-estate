@@ -83,6 +83,29 @@ export function spamFlags(title?: string | null, description?: string | null): s
   return flags;
 }
 
+// Risk score (0–100) blending auto-flags and buyer reports into one triage number for the queue.
+// Weights are deliberately simple/tunable; higher = review sooner.
+function flagWeight(flag: string): number {
+  if (flag.startsWith("Duplicate image")) return 30;
+  if (flag.startsWith("Price outlier")) return 25;
+  if (flag.startsWith("One phone")) return 20;
+  if (flag.startsWith("Contact info")) return 20;
+  if (flag.startsWith("Spam keywords")) return 15;
+  return 10;
+}
+
+export function riskScore(flags: readonly string[], reportCount: number): number {
+  const fromFlags = flags.reduce((sum, f) => sum + flagWeight(f), 0);
+  const fromReports = Math.min(reportCount * 15, 45); // reports matter but shouldn't dominate alone
+  return Math.min(100, fromFlags + fromReports);
+}
+
+export function riskLevel(score: number): "low" | "medium" | "high" {
+  if (score >= 60) return "high";
+  if (score >= 30) return "medium";
+  return "low";
+}
+
 /**
  * Human-readable auto-flags for one listing. Pure — callers pass in the data:
  *  - `listingMedia`: this listing's photos

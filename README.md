@@ -82,7 +82,10 @@ configured" error.
    → open **/admin/moderation** to see pending listings with photos, key facts, and auto-flags
    (duplicate image via pHash, one-phone-many, price-outlier vs the locality median, spam text with
    off-platform contact info). **Approve** → the listing goes `live` and appears in
-   search; **Reject** with a reason → owner sees the reason on their dashboard.
+   search; **Reject** with a reason → owner sees the reason on their dashboard. Signed-in buyers can
+   **⚑ Report** a listing (spam/fraud/duplicate/…) from its detail page; reports plus auto-flags feed
+   a **risk score** (0–100) that sorts the queue riskiest-first. Sensitive routes (login, register,
+   contact, report) are **rate-limited** (429 on abuse).
 8. **Auto-expiry:** listings carry an `expiresAt` (~45 days). `POST /api/cron/expire-listings` flips
    any `live` listing past its expiry to `expired` (returns `{ expired: n }`); search also hides
    stale listings defensively. Point a daily scheduler at it (Vercel Cron, a GitHub Actions cron, or
@@ -97,14 +100,15 @@ for TDD. GitHub Actions ([.github/workflows/ci.yml](./.github/workflows/ci.yml))
 **lint + typecheck + test** on every push to `main` and every PR.
 
 ### Verified
-- `npm run lint` ✅ · `npm run typecheck` ✅ · `npm test` ✅ (48 tests) · `npm run build` ✅.
+- `npm run lint` ✅ · `npm run typecheck` ✅ · `npm test` ✅ (57 tests) · `npm run build` ✅.
 
 ### Implemented vs. TODO
 - **Wired:** **email + password auth** (`/login` — register/login/logout, JWT session cookie +
   `/api/me`), phone-OTP request/verify (dev stub) + dev-login (both kept for later),
   **post-a-listing UI** (`/post` → draft → submit for review), **media pipeline** (upload → EXIF
   strip → WebP + blur placeholder → pHash/dup-reject; gallery + search thumbnails), **moderation
-  queue** (`/admin/moderation` — submit → pending → approve/reject + reason, auto-flags),
+  queue** (`/admin/moderation` — submit → pending → approve/reject + reason, auto-flags + buyer
+  reports + risk score), **abuse reporting** + **rate limiting** on sensitive routes,
   **search UX** (locality autocomplete + synced Leaflet map/list + filter-sort bar + load-more
   pagination + "search this area"), **listing detail** (SSR — gallery, key facts, amenities,
   mini-map, similar homes), **SEO baseline** (per-listing metadata +

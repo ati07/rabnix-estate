@@ -9,6 +9,7 @@ import { listingTitle, listingJsonLd } from "@/lib/seo";
 import { formatPriceShort } from "@/modules/search/format";
 import { ContactButton } from "./ContactButton";
 import { FavoriteButton } from "./FavoriteButton";
+import { ReportButton } from "./ReportButton";
 
 const CURRENCY = process.env.NEXT_PUBLIC_DEFAULT_CURRENCY ?? "INR";
 
@@ -175,6 +176,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
       <div style={{ marginTop: "1.25rem", display: "flex", gap: "0.6rem", alignItems: "center" }}>
         <ContactButton listingId={listing.id} />
         <FavoriteButton listingId={listing.id} initialSaved={saved} isAuthed={!!user} />
+        <ReportButton listingId={listing.id} isAuthed={!!user} />
       </div>
 
       {similar.length > 0 && (

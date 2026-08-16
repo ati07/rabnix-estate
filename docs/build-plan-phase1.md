@@ -56,9 +56,14 @@ product, and the enquiry appears in both dashboards.
       schema.org JSON-LD; `sitemap.xml` (listings + per-locality search) + `robots.txt`
 
 ### Weeks 5–6 — Harden & seed
-- [ ] Anti-fraud scoring pass; rate limits; abuse reporting
+- [x] Anti-fraud scoring pass; rate limits; abuse reporting. In-memory sliding-window rate limits on
+      login/register/contact/report (429). Buyer **report** flow (`POST /api/listings/:id/report`,
+      `Report` model) feeds a moderation **risk score** (auto-flags + report pressure, 0–100) that
+      sorts the queue riskiest-first. Redis rate-limit store is the multi-node upgrade.
 - [ ] Manual + agent-partnership **supply seeding** in ONE dense locality (ops, not code)
-- [ ] Analytics funnel dashboards vs. North Star (qualified enquiries/wk) + response-rate guardrail
+- [~] Analytics funnel dashboards vs. North Star (qualified enquiries/wk) + response-rate guardrail.
+      Provider-neutral facade wired (`src/lib/observability.ts`, `instrumentation.ts`) emitting
+      `enquiry_created`/`listing_reported`; PostHog/Sentry SDKs + dashboards are the env-gated swap-in.
 - [~] Perf pass: LCP image `priority`; non-LCP images lazy (next/image default) + WebP + blur
       placeholders; map lazy-init (`next/dynamic ssr:false`). 4G LCP <2.5s target still needs a
       prod-build Lighthouse run to confirm.

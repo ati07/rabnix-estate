@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { flagsForListing, type OtherMedia } from "@/modules/listings/moderation";
+import { flagsForListing, riskScore, riskLevel, type OtherMedia } from "@/modules/listings/moderation";
 import { ModerateButtons } from "./ModerateButtons";
 
 const CURRENCY = process.env.NEXT_PUBLIC_DEFAULT_CURRENCY ?? "INR";
@@ -23,22 +23,29 @@ export default async function ModerationPage() {
   let otherMedia: OtherMedia[];
   let ownerCounts: Map<string, number>;
   let localityPrices: Map<string, number[]>; // `${localityId}|${intent}` → comparable live prices
+  let reportCounts: Map<string, number>;
   try {
     pending = await loadPending();
     const pendingIds = new Set(pending.map((l) => l.id));
 
     // Photos on *other* listings (dup-image detection), per-owner listing counts (one-phone-many),
-    // and comparable live prices per locality+intent (price-outlier).
-    const [media, grouped, live] = await Promise.all([
+    // comparable live prices per locality+intent (price-outlier), and open report counts (risk).
+    const [media, grouped, live, reports] = await Promise.all([
       prisma.listingMedia.findMany({ select: { listingId: true, phash: true } }),
       prisma.listing.groupBy({ by: ["ownerId"], _count: { _all: true } }),
       prisma.listing.findMany({
         where: { status: "live", localityId: { not: null } },
         select: { localityId: true, intent: true, price: true },
       }),
+      prisma.report.groupBy({
+        by: ["listingId"],
+        where: { listingId: { in: [...pendingIds] }, resolvedAt: null },
+        _count: { _all: true },
+      }),
     ]);
     otherMedia = media.filter((m) => !pendingIds.has(m.listingId));
     ownerCounts = new Map(grouped.map((g) => [g.ownerId, g._count._all]));
+    reportCounts = new Map(reports.map((r) => [r.listingId, r._count._all]));
     localityPrices = new Map();
     for (const l of live) {
       const key = `${l.localityId}|${l.intent}`;
@@ -65,19 +72,26 @@ export default async function ModerationPage() {
         <div className="notice">Nothing pending. 🎉</div>
       ) : (
         <ul className="enquiry-list">
-          {pending.map((l) => {
-            const flags = flagsForListing(l.media, otherMedia, ownerCounts.get(l.ownerId) ?? 0, {
-              price: Number(l.price),
-              localityPrices: l.localityId ? localityPrices.get(`${l.localityId}|${l.intent}`) : undefined,
-              title: l.title,
-              description: l.description,
-            });
+          {pending
+            .map((l) => {
+              const flags = flagsForListing(l.media, otherMedia, ownerCounts.get(l.ownerId) ?? 0, {
+                price: Number(l.price),
+                localityPrices: l.localityId ? localityPrices.get(`${l.localityId}|${l.intent}`) : undefined,
+                title: l.title,
+                description: l.description,
+              });
+              const reports = reportCounts.get(l.id) ?? 0;
+              return { l, flags, reports, score: riskScore(flags, reports) };
+            })
+            // Riskiest first so moderators triage the worst listings before the fair-queue order.
+            .sort((a, b) => b.score - a.score)
+            .map(({ l, flags, reports, score }) => {
             const primary = [...l.media].sort((a, b) => a.ord - b.ord)[0];
             return (
               <li className="card" key={l.id}>
                 <div className="enquiry-head">
                   <strong>{l.title ?? `${l.bedrooms ?? ""} BHK ${l.propertyType}`}</strong>
-                  <span className="badge badge-pending">pending</span>
+                  <span className={`badge badge-risk-${riskLevel(score)}`}>risk {score}</span>
                 </div>
 
                 {primary && (
@@ -106,8 +120,11 @@ export default async function ModerationPage() {
                 </p>
                 {l.description && <p>{l.description}</p>}
 
-                {flags.length > 0 && (
+                {(flags.length > 0 || reports > 0) && (
                   <p style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap", margin: "0.5rem 0 0" }}>
+                    {reports > 0 && (
+                      <span className="badge badge-flag">⚑ {reports} buyer report{reports === 1 ? "" : "s"}</span>
+                    )}
                     {flags.map((f) => (
                       <span className="badge badge-flag" key={f}>
                         ⚑ {f}

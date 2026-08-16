@@ -101,6 +101,13 @@ a.btn { display: inline-block; text-decoration: none; text-align: center; }
 .badge-expired, .badge-rejected { color: #f87171; border-color: #7a2727; }
 .badge-channel { color: var(--muted); }
 .badge-flag { color: #fbbf24; border-color: #7a5a12; background: #241d08; }
+.badge-risk-low { color: #34d399; border-color: #1f6f52; }
+.badge-risk-medium { color: #fbbf24; border-color: #7a5a12; }
+.badge-risk-high { color: #f87171; border-color: #7a2727; background: #2a1414; }
+.report-form { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin-top: 0.25rem; }
+.report-form select, .report-form input { background: #0d0f14; color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 0.4rem 0.5rem; font-size: 0.85rem; font-family: inherit; }
+.report-form input { flex: 1 1 160px; }
+.report-done { color: #34d399; font-size: 0.85rem; font-weight: 600; }
 
 .btn-danger { background: #b91c1c; }
 .btn-ghost { background: transparent; color: var(--accent); border: 1px solid var(--border); }

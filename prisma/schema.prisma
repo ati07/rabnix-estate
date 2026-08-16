@@ -54,6 +54,15 @@ enum EnquiryChannel {
   whatsapp
 }
 
+enum ReportReason {
+  spam
+  fraud
+  duplicate
+  offensive
+  wrong_info
+  other
+}
+
 model City {
   id         String      @id @default(uuid())
   name       String
@@ -90,6 +99,8 @@ model User {
   listings      Listing[]
   enquiries     Enquiry[] @relation("BuyerEnquiries")
   favorites     Favorite[]
+  reports       Report[]  @relation("UserReports")
+  savedSearches SavedSearch[]
 }
 
 model Listing {
@@ -122,6 +133,7 @@ model Listing {
   media        ListingMedia[]
   enquiries    Enquiry[]
   favorites    Favorite[]
+  reports      Report[]
 
   @@index([status, intent, propertyType, price, bedrooms])
   @@index([localityId])
@@ -167,4 +179,34 @@ model Favorite {
   createdAt DateTime @default(now())
 
   @@id([userId, listingId])
+}
+
+// Buyer-submitted abuse report. Feeds the moderation risk score; a reporter is optional so
+// logged-out reports could be added later (currently the route requires auth).
+model Report {
+  id         String       @id @default(uuid())
+  listing    Listing      @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId  String
+  reporter   User?        @relation("UserReports", fields: [reporterId], references: [id])
+  reporterId String?
+  reason     ReportReason
+  detail     String?
+  createdAt  DateTime     @default(now())
+  resolvedAt DateTime?    // set when an admin acts on the listing
+
+  @@index([listingId])
+}
+
+// A buyer's saved search. `query` holds the serialized search params (intent/bhk/type/price/
+// localityId/bbox); `lastNotifiedAt` is the watermark for "new matches since you last looked".
+model SavedSearch {
+  id             String   @id @default(uuid())
+  user           User     @relation(fields: [userId], references: [id])
+  userId         String
+  label          String?
+  query          Json
+  createdAt      DateTime @default(now())
+  lastNotifiedAt DateTime @default(now())
+
+  @@index([userId])
 }

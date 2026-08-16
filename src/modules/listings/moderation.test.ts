@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { flagsForListing, median, priceOutlierFlag, spamFlags } from "./moderation";
+import { flagsForListing, median, priceOutlierFlag, spamFlags, riskScore, riskLevel } from "./moderation";
 
 describe("flagsForListing", () => {
   const hash = "0f0f0f0f0f0f0f0f";
@@ -98,6 +98,26 @@ describe("priceOutlierFlag", () => {
   });
   it("stays silent when price is missing", () => {
     expect(priceOutlierFlag(undefined, comps)).toBeNull();
+  });
+});
+
+describe("riskScore / riskLevel", () => {
+  it("is 0 with no flags or reports", () => {
+    expect(riskScore([], 0)).toBe(0);
+    expect(riskLevel(0)).toBe("low");
+  });
+  it("weights a duplicate image heavily", () => {
+    expect(riskScore(["Duplicate image"], 0)).toBe(30);
+    expect(riskLevel(riskScore(["Duplicate image"], 0))).toBe("medium");
+  });
+  it("adds report pressure but caps its contribution", () => {
+    expect(riskScore([], 3)).toBe(45);
+    expect(riskScore([], 10)).toBe(45); // capped at 45
+  });
+  it("caps the total at 100", () => {
+    const flags = ["Duplicate image", "Price outlier (3.0× locality median)", "One phone → 6 listings", "Contact info in text", "Spam keywords"];
+    expect(riskScore(flags, 5)).toBe(100);
+    expect(riskLevel(100)).toBe("high");
   });
 });
 
