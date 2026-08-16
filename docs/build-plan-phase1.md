@@ -16,7 +16,7 @@ product, and the enquiry appears in both dashboards.
 - [x] Scaffold Next.js (App Router, TS) + API modules + Postgres/PostGIS + Prisma/SQL
 - [x] Auth: phone-OTP request/verify → JWT session cookie (`/auth/otp/*`, `/api/me`)
 - [x] Seed `cities` + `localities` for the launch city (+ sample listings; boundaries TODO)
-- [x] Local dev: docker-compose Postgres+PostGIS
+- [x] Local dev: plain Postgres (local install or managed Neon/Supabase) — no Docker needed
 - [ ] CI: lint + typecheck + test; Sentry + PostHog wired
 
 ### Week 2 — Listing creation (supply)

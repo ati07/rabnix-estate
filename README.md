@@ -34,16 +34,19 @@ boundaries and API surface from the docs. Modules live under `src/modules` (`aut
 `search`); route handlers under `src/app/api`.
 
 ### Quickstart
+Point `DATABASE_URL` at a Postgres database — a **local install** or a free managed one
+(Neon / Supabase). `db:push` creates the database if it doesn't exist.
 ```bash
 npm install
-copy .env.example .env         # DATABASE_URL default matches docker-compose below
-docker compose up -d           # local Postgres + PostGIS on :5432
+copy .env.example .env         # set DATABASE_URL to your Postgres connection string
 npm run db:generate            # prisma client
-npm run db:push                # create tables
+npm run db:push                # create database + tables
 npm run db:seed                # launch city + localities + 4 sample listings
-npm run dev                    # http://localhost:3000
+npm run dev                    # http://localhost:3000 (falls back to :3001 if in use)
 ```
-Without a database the UI still renders; API routes return a clear "database not configured" error.
+PostGIS is only needed for later geo features (bbox/radius search); the current app runs on plain
+Postgres. Without a database the UI still renders; API routes return a clear "database not
+configured" error.
 
 ### Local testing — what to try
 1. **Search UI:** open http://localhost:3000, search locality `Wakad`/`Baner`/`Hinjewadi`/`Kharadi`
@@ -61,9 +64,6 @@ Without a database the UI still renders; API routes return a clear "database not
 4. **Create a listing (draft):** `POST /api/listings` with `ownerId` (from step 3), `intent`,
    `propertyType`, `price`, `lat`, `lng`.
 
-No Docker? Point `DATABASE_URL` at a free Neon/Supabase Postgres (enable the `postgis` extension) and
-skip the `docker compose` step.
-
 ### Verified
 - `npm run typecheck` ✅ · `npm run build` ✅ (7 routes compile: landing, listing detail, OTP
   request/verify, listings create, listings search).
@@ -71,7 +71,7 @@ skip the `docker compose` step.
 ### Implemented vs. TODO
 - **Wired:** phone-OTP request/verify (dev stub), **JWT session cookie + `/api/me`**, listing
   create (draft), listing search (filters + cursor pagination), **search results page**, listing
-  detail (SSR), landing search UI, **sample-data seed**, **docker-compose Postgres+PostGIS**.
+  detail (SSR), landing search UI, **sample-data seed**.
 - **TODO (see build plan):** real SMS provider, media upload + pHash, OTP-gated contact reveal,
   moderation queue, map+list synced results UI, saved searches. Marked with `TODO` in code.
 
