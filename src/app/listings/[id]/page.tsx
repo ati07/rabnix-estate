@@ -1,13 +1,26 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
+import dynamic from "next/dynamic";
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import { listingTitle, listingJsonLd } from "@/lib/seo";
+import { formatPriceShort } from "@/modules/search/format";
 import { ContactButton } from "./ContactButton";
 import { FavoriteButton } from "./FavoriteButton";
 
 const CURRENCY = process.env.NEXT_PUBLIC_DEFAULT_CURRENCY ?? "INR";
+
+// Leaflet touches `window`, so the mini-map is client-only and lazy-loaded (no SSR).
+const ListingMap = dynamic(() => import("./ListingMap"), {
+  ssr: false,
+  loading: () => <div className="listing-map-inner listing-map-loading">Loading map…</div>,
+});
+
+function humanize(value: string): string {
+  return value.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+}
 
 export async function generateMetadata({
   params,
@@ -41,7 +54,6 @@ export async function generateMetadata({
 }
 
 // Listing detail (server-rendered for SEO — docs/system-design.md §6).
-// Gallery/map/similar/contact-reveal are Week 3–4 work; this renders core facts.
 export default async function ListingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
@@ -67,7 +79,27 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
       }))
     : false;
 
+  // Similar listings: same locality + intent, closest by price, excluding this one.
+  const price = Number(listing.price);
+  const band = price * 0.4; // ±40% price window
+  const similar = listing.localityId
+    ? await prisma.listing.findMany({
+        where: {
+          id: { not: listing.id },
+          status: "live",
+          expiresAt: { gt: new Date() },
+          intent: listing.intent,
+          localityId: listing.localityId,
+          price: { gte: price - band, lte: price + band },
+        },
+        include: { media: { where: { isPrimary: true }, take: 1 }, locality: true },
+        take: 3,
+        orderBy: { createdAt: "desc" },
+      })
+    : [];
+
   const photos = [...listing.media].sort((a, b) => a.ord - b.ord);
+  const title = listing.title ?? `${listing.bedrooms ?? ""} BHK ${humanize(listing.propertyType)}`;
 
   return (
     <article>
@@ -75,7 +107,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(listingJsonLd(listing)) }}
       />
-      <h1>{listing.title ?? `${listing.bedrooms ?? ""} BHK ${listing.propertyType}`}</h1>
+      <h1>{title}</h1>
 
       {photos.length > 0 && (
         <div className="gallery">
@@ -95,18 +127,93 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
       )}
 
       <p className="price">
-        {process.env.NEXT_PUBLIC_DEFAULT_CURRENCY ?? "INR"} {String(listing.price)}
+        {CURRENCY} {String(listing.price)}
         {listing.intent === "rent" ? " / month" : ""}
       </p>
       <p className="meta">
         {listing.locality?.name ?? "—"} · {listing.areaSqft ?? "—"} sqft · {listing.bathrooms ?? "—"} bath
       </p>
+
+      {/* Key facts */}
+      <dl className="facts">
+        <div><dt>Type</dt><dd>{humanize(listing.propertyType)}</dd></div>
+        <div><dt>For</dt><dd>{humanize(listing.intent)}</dd></div>
+        {listing.bedrooms != null && <div><dt>Bedrooms</dt><dd>{listing.bedrooms} BHK</dd></div>}
+        {listing.bathrooms != null && <div><dt>Bathrooms</dt><dd>{listing.bathrooms}</dd></div>}
+        {listing.areaSqft != null && <div><dt>Area</dt><dd>{listing.areaSqft} sqft</dd></div>}
+        {listing.floor != null && <div><dt>Floor</dt><dd>{listing.floor}</dd></div>}
+        {listing.furnishing && <div><dt>Furnishing</dt><dd>{humanize(listing.furnishing)}</dd></div>}
+      </dl>
+
       {listing.description && <p>{listing.description}</p>}
+
+      {listing.amenities.length > 0 && (
+        <section className="detail-section">
+          <h2>Amenities</h2>
+          <ul className="chip-row">
+            {listing.amenities.map((a) => (
+              <li key={a} className="chip">{humanize(a)}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section className="detail-section">
+        <h2>Location</h2>
+        <div className="listing-map">
+          <ListingMap
+            lat={listing.lat}
+            lng={listing.lng}
+            label={formatPriceShort(price)}
+            localityName={listing.locality?.name ?? title}
+          />
+        </div>
+      </section>
+
       <div style={{ marginTop: "1.25rem", display: "flex", gap: "0.6rem", alignItems: "center" }}>
         <ContactButton listingId={listing.id} />
         <FavoriteButton listingId={listing.id} initialSaved={saved} isAuthed={!!user} />
       </div>
-      {/* TODO: map, amenities, similar listings */}
+
+      {similar.length > 0 && (
+        <section className="detail-section">
+          <h2>Similar homes in {listing.locality?.name}</h2>
+          <ul className="similar-grid">
+            {similar.map((s) => {
+              const img = s.media[0];
+              return (
+                <li key={s.id} className="card similar-card">
+                  <Link href={`/listings/${s.id}`} className="similar-link">
+                    {img ? (
+                      <Image
+                        src={img.url}
+                        alt={s.title ?? "Listing photo"}
+                        width={img.width ?? 400}
+                        height={img.height ?? 300}
+                        sizes="(max-width: 700px) 100vw, 240px"
+                        className="similar-thumb"
+                        placeholder={img.blurDataUrl ? "blur" : "empty"}
+                        blurDataURL={img.blurDataUrl ?? undefined}
+                      />
+                    ) : (
+                      <div className="similar-thumb similar-thumb-empty" />
+                    )}
+                    <div className="similar-body">
+                      <span className="similar-price">
+                        {CURRENCY} {formatPriceShort(Number(s.price))}
+                        {s.intent === "rent" ? "/mo" : ""}
+                      </span>
+                      <span className="similar-meta">
+                        {s.title ?? `${s.bedrooms ?? ""} BHK ${humanize(s.propertyType)}`}
+                      </span>
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
     </article>
   );
 }

@@ -36,7 +36,8 @@ product, and the enquiry appears in both dashboards.
       load-more pagination) + a filter/sort bar (intent, type, BHK, price, sort)
 - [x] Locality autocomplete (typo-tolerant, `/api/localities/search`). In-memory ranking
       (prefix > substring > edit-distance ≤2) over the small locality set; pg_trgm is the upgrade path.
-- [ ] Listing detail: gallery, key facts, amenities, map, similar
+- [x] Listing detail: gallery, key-facts grid, amenities chips, single-marker Leaflet mini-map,
+      similar homes (same locality + intent, ±40% price band)
 
 ### Week 4 — Contact loop + moderation
 - [x] Contact reveal + enquiry create (`call`/`form`/`whatsapp`) — dev-login stands in for OTP

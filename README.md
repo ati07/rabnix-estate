@@ -64,7 +64,9 @@ configured" error.
    curl localhost:3000/api/me -b cookies.txt
    ```
 4. **Contact loop:** signed in, open a listing → **Contact lister** → records an enquiry and reveals
-   the lister's phone (`POST /api/listings/:id/contact`).
+   the lister's phone (`POST /api/listings/:id/contact`). The detail page shows a **key-facts grid**,
+  **amenities chips**, a **location mini-map** (Leaflet/OSM), and **similar homes** (same locality +
+  intent, ±40% price band).
 5. **Post a property (with photos):** signed in as an owner, open **/post** → fill the form → attach
    a few images → **Publish**. Photos are processed server-side (EXIF stripped, converted to WebP,
    blur placeholder + perceptual hash) and shown as a gallery on the listing and as thumbnails in
@@ -103,7 +105,8 @@ for TDD. GitHub Actions ([.github/workflows/ci.yml](./.github/workflows/ci.yml))
   strip → WebP + blur placeholder → pHash/dup-reject; gallery + search thumbnails), **moderation
   queue** (`/admin/moderation` — submit → pending → approve/reject + reason, auto-flags),
   **search UX** (locality autocomplete + synced Leaflet map/list + filter-sort bar + load-more
-  pagination + "search this area"), listing detail (SSR), **SEO baseline** (per-listing metadata +
+  pagination + "search this area"), **listing detail** (SSR — gallery, key facts, amenities,
+  mini-map, similar homes), **SEO baseline** (per-listing metadata +
   schema.org JSON-LD, `sitemap.xml`, `robots.txt`), **contact → enquiry + phone reveal**, **dashboard** (`/dashboard` — lister: my listings +
   enquiries received + respond; buyer: **saved homes** + enquiries I've sent), **auto-expiry job**
   (`/api/cron/expire-listings`), landing search UI, sample-data seed.
