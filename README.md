@@ -61,8 +61,12 @@ configured" error.
    ```
 4. **Contact loop:** signed in, open a listing → **Contact lister** → records an enquiry and reveals
    the lister's phone (`POST /api/listings/:id/contact`).
-5. **Post a property:** signed in as an owner, open **/post** → fill the form → **Publish** → you land
-   on the new live listing, which now appears in search.
+5. **Post a property (with photos):** signed in as an owner, open **/post** → fill the form → attach
+   a few images → **Publish**. Photos are processed server-side (EXIF stripped, converted to WebP,
+   blur placeholder + perceptual hash) and shown as a gallery on the listing and as thumbnails in
+   search. Re-uploading the same photo to a listing is rejected as a duplicate. Files land under
+   `public/uploads/` in dev (gitignored); production swaps in an object store/CDN via
+   `src/lib/storage.ts`.
 6. **Lister dashboard:** as the owner, open **/dashboard** → see your listings (status + enquiry
    counts) and enquiries received → **Mark responded** on an enquiry (sets `listerRespondedAt`, the
    response-rate guardrail).
@@ -76,12 +80,14 @@ configured" error.
 ### Implemented vs. TODO
 - **Wired:** **email + password auth** (`/login` — register/login/logout, JWT session cookie +
   `/api/me`), phone-OTP request/verify (dev stub) + dev-login (both kept for later),
-  **post-a-listing UI** (`/post` → draft → publish), listing search (filters + cursor
-  pagination), search results page, listing detail (SSR), **contact → enquiry + phone reveal**,
-  **lister dashboard** (`/dashboard` — my listings + enquiries received + respond),
-  landing search UI, sample-data seed.
-- **TODO (see build plan):** real SMS/OTP login, media upload + pHash, moderation queue, map+list
-  synced results UI, buyer dashboard, saved searches. Marked with `TODO` in code.
+  **post-a-listing UI** (`/post` → draft → publish), **media pipeline** (upload → EXIF strip →
+  WebP + blur placeholder → pHash/dup-reject; gallery + search thumbnails), listing search
+  (filters + cursor pagination), search results page, listing detail (SSR),
+  **contact → enquiry + phone reveal**, **lister dashboard** (`/dashboard` — my listings +
+  enquiries received + respond), landing search UI, sample-data seed.
+- **TODO (see build plan):** real SMS/OTP login, real CDN for media + cross-listing dup moderation,
+  moderation queue, map+list synced results UI, buyer dashboard, saved searches. Marked with `TODO`
+  in code.
 
 ## Status
 🏗️ **Planning docs complete + MVP scaffold building.** See

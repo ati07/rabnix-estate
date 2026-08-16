@@ -23,7 +23,8 @@ product, and the enquiry appears in both dashboards.
 ### Week 2 — Listing creation (supply)
 - [x] Listing data model + migrations (see `data-model.sql`)
 - [x] Post flow: `/post` form → draft → publish; location from locality (map pin, photos, autosave TODO)
-- [ ] Media pipeline: upload → responsive/WebP + blur placeholder → CDN; EXIF strip; pHash
+- [x] Media pipeline: upload → WebP + blur placeholder; EXIF strip; pHash (dHash) + dup-reject.
+      Local FS storage behind a swappable interface; responsive delivery via next/image; real CDN TODO.
 - [x] `expires_at` set on create (auto-expiry job TODO)
 
 ### Week 3 — Search & detail (demand)

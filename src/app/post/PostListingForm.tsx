@@ -21,6 +21,7 @@ export function PostListingForm({ localities }: { localities: Locality[] }) {
     const fd = new FormData(e.currentTarget);
     const numOrUndef = (k: string) => (fd.get(k) ? Number(fd.get(k)) : undefined);
     const strOrUndef = (k: string) => ((fd.get(k) as string) || undefined);
+    const photos = fd.getAll("photos").filter((f): f is File => f instanceof File && f.size > 0);
 
     const body = {
       intent: fd.get("intent"),
@@ -54,6 +55,20 @@ export function PostListingForm({ localities }: { localities: Locality[] }) {
         return;
       }
       const { listing } = (await res.json()) as { listing: { id: string } };
+
+      // Upload photos onto the draft before publishing (EXIF-strip → WebP → pHash server-side).
+      if (photos.length > 0) {
+        const media = new FormData();
+        for (const p of photos) media.append("files", p);
+        const up = await fetch(`/api/listings/${listing.id}/media`, { method: "POST", body: media });
+        if (!up.ok) {
+          const err = (await up.json().catch(() => null)) as { error?: { message?: string } } | null;
+          setError(err?.error?.message ?? "Draft created but photo upload failed.");
+          setBusy(false);
+          return;
+        }
+      }
+
       const pub = await fetch(`/api/listings/${listing.id}/submit`, { method: "POST" });
       if (!pub.ok) {
         setError("Draft created but publishing failed.");
@@ -142,6 +157,12 @@ export function PostListingForm({ localities }: { localities: Locality[] }) {
       <label>
         Description
         <textarea name="description" rows={4} placeholder="Key details buyers care about…" />
+      </label>
+
+      <label>
+        Photos
+        <input name="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple />
+        <span className="meta">Up to 12 images · JPEG/PNG/WebP · ≤10 MB each</span>
       </label>
 
       {error && <p className="error">{error}</p>}

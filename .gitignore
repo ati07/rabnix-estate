@@ -10,6 +10,9 @@ build/
 out/
 tsconfig.tsbuildinfo
 
+# Uploaded media (dev local storage; production uses an object store / CDN)
+/public/uploads/
+
 # Env & secrets
 .env
 .env.*

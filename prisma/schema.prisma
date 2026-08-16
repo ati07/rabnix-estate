@@ -128,10 +128,11 @@ model ListingMedia {
   id        String   @id @default(uuid())
   listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
   listingId String
-  url       String
-  phash     String?  // perceptual hash — duplicate/fraud detection
-  width     Int?
-  height    Int?
+  url         String
+  phash       String?  // perceptual hash (dHash) — duplicate/fraud detection
+  blurDataUrl String?  // tiny base64 WebP placeholder for next/image blur-up
+  width       Int?
+  height      Int?
   ord       Int      @default(0)
   isPrimary Boolean  @default(false)
   createdAt DateTime @default(now())

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { prisma } from "@/lib/db";
 import { searchListings } from "@/modules/search/searchListings";
 
@@ -54,6 +55,18 @@ export default async function SearchPage({
         <div className="grid">
           {data.results.map((l) => (
             <Link key={l.id} href={`/listings/${l.id}`} className="card">
+              {l.media[0] && (
+                <Image
+                  className="card-thumb"
+                  src={l.media[0].url}
+                  alt={l.title ?? "Listing photo"}
+                  width={400}
+                  height={300}
+                  sizes="(max-width: 700px) 100vw, 350px"
+                  placeholder={l.media[0].blurDataUrl ? "blur" : "empty"}
+                  blurDataURL={l.media[0].blurDataUrl ?? undefined}
+                />
+              )}
               <h3>{l.title ?? `${l.bedrooms ?? ""} BHK ${l.propertyType}`}</h3>
               <div className="price">
                 {currency} {String(l.price)}
