@@ -1,0 +1,55 @@
+# Phase-1 Build Plan (MVP) — Rabnix Estate
+
+> **Version:** 1.0.0 · **Status:** Draft · **Last updated:** 2026-08-16 · **Owner:** Engineering
+
+Goal of Phase 1: ship the **transactable core** (PRD §3 MVP) and reach listing liquidity in a few
+localities of one city. Assumes a 2–4 person full-stack team. Sequenced so each week ends with
+something demoable.
+
+## Milestone: "First real enquiry"
+Definition of done for Phase 1 = a real buyer contacts a real, phone-verified lister through the
+product, and the enquiry appears in both dashboards.
+
+## Week-by-week
+
+### Week 1 — Foundations
+- [ ] Scaffold Next.js (App Router, TS) + API modules + Postgres/PostGIS (managed) + Prisma/SQL
+- [ ] Auth: phone-OTP request/verify → JWT session (`/auth/otp/*`, `/me`)
+- [ ] CI: lint + typecheck + test; Sentry + PostHog wired
+- [ ] Seed `cities` + `localities` (with boundaries) for the launch city
+
+### Week 2 — Listing creation (supply)
+- [ ] Listing data model + migrations (see `data-model.sql`)
+- [ ] Post flow: draft → attributes → map pin + locality → photos → submit (autosave, completeness meter)
+- [ ] Media pipeline: upload → responsive/WebP + blur placeholder → CDN; EXIF strip; pHash
+- [ ] `expires_at` auto-expiry job
+
+### Week 3 — Search & detail (demand)
+- [ ] Search API: locality + filters + `bbox`, Postgres FTS + PostGIS (no search engine yet)
+- [ ] Results UI: synced map + list, bottom-sheet filters (mobile-first)
+- [ ] Locality autocomplete (pg_trgm, typo-tolerant, "near me")
+- [ ] Listing detail: gallery, key facts, amenities, map, similar
+
+### Week 4 — Contact loop + moderation
+- [ ] OTP-gated contact reveal + enquiry create (`call`/`form`/`whatsapp`)
+- [ ] Buyer & lister dashboards (my listings, my enquiries, respond → sets `lister_responded_at`)
+- [ ] Internal moderation queue: approve/reject + reason; auto-flag rules (dup pHash, one phone→many)
+- [ ] SEO baseline: SSR listing/locality pages, schema.org, sitemap
+
+### Weeks 5–6 — Harden & seed
+- [ ] Anti-fraud scoring pass; rate limits; abuse reporting
+- [ ] Manual + agent-partnership **supply seeding** in ONE dense locality (ops, not code)
+- [ ] Analytics funnel dashboards vs. North Star (qualified enquiries/wk) + response-rate guardrail
+- [ ] Perf pass: LCP < 2.5s on 4G; image lazy-load; map lazy-init
+- [ ] Private beta → invite first buyers only after supply liquidity exists
+
+## Cut lines (do NOT build in Phase 1)
+Saved-search alerts, verified badge, agent paid plans, multi-city, analytics-for-listers — all
+Phase 2+. Guard scope ruthlessly.
+
+## Sequencing rule
+**Supply before demand.** Weeks 1–2 stand up posting; do not run buyer acquisition until the seed
+locality has real inventory (end of Weeks 5–6).
+
+## Changelog
+- **1.0.0** (2026-08-16) — Initial Phase-1 build plan.

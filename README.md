@@ -28,5 +28,32 @@ Each planning doc carries a semantic version + status header. History is tracked
 [docs/CHANGELOG.md](./docs/CHANGELOG.md) and, of course, git. See
 [docs/README.md](./docs/README.md) for the convention.
 
+## App scaffold (MVP)
+A runnable **Next.js (App Router, TypeScript) + Prisma/Postgres** skeleton implementing the module
+boundaries and API surface from the docs. Modules live under `src/modules` (`auth`, `listings`,
+`search`); route handlers under `src/app/api`.
+
+### Quickstart
+```bash
+npm install
+cp .env.example .env          # set DATABASE_URL (Postgres + PostGIS), tweak the launch-city vars
+npm run db:generate           # prisma client
+npm run db:push               # create tables
+npm run db:seed               # seed launch city + localities
+npm run dev                   # http://localhost:3000
+```
+Without a database the UI still renders; API routes return a clear "database not configured" error.
+
+### Verified
+- `npm run typecheck` ✅ · `npm run build` ✅ (7 routes compile: landing, listing detail, OTP
+  request/verify, listings create, listings search).
+
+### Implemented vs. TODO
+- **Wired:** phone-OTP request/verify (dev stub logs code to console), listing create (draft),
+  listing search (filters + cursor pagination), listing detail (SSR), landing search UI.
+- **TODO (see build plan):** JWT sessions, media upload + pHash, OTP-gated contact reveal,
+  moderation queue, map+list results UI, saved searches. Marked with `TODO` in code.
+
 ## Status
-📄 **Planning phase.** Docs first, code next. No application code has been written yet.
+🏗️ **Planning docs complete + MVP scaffold building.** See
+[docs/build-plan-phase1.md](./docs/build-plan-phase1.md) for the week-by-week plan.

@@ -1,0 +1,165 @@
+// Rabnix Estate — Prisma schema (app scaffold).
+// NOTE: The source-of-truth reference model is docs/data-model.sql, which uses PostGIS
+// geography types. Prisma has no native PostGIS type, so geo is modeled here as lat/lng
+// floats; production geo queries (bbox / radius / locality boundary) run as raw SQL against
+// PostGIS. See docs/system-design.md §3.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  buyer
+  owner
+  agent
+  admin
+}
+
+enum ListingIntent {
+  sale
+  rent
+}
+
+enum PropertyType {
+  apartment
+  independent_house
+  villa
+  plot
+  commercial
+  pg
+}
+
+enum ListingStatus {
+  draft
+  pending
+  live
+  expired
+  rejected
+}
+
+enum Furnishing {
+  unfurnished
+  semi_furnished
+  furnished
+}
+
+enum EnquiryChannel {
+  call
+  form
+  whatsapp
+}
+
+model City {
+  id         String      @id @default(uuid())
+  name       String
+  state      String?
+  lat        Float?
+  lng        Float?
+  createdAt  DateTime    @default(now())
+  localities Locality[]
+}
+
+model Locality {
+  id        String    @id @default(uuid())
+  city      City      @relation(fields: [cityId], references: [id])
+  cityId    String
+  name      String
+  aliases   String[]  @default([]) // typo-tolerant autocomplete
+  lat       Float?
+  lng       Float?
+  createdAt DateTime  @default(now())
+  listings  Listing[]
+
+  @@index([name])
+}
+
+model User {
+  id            String    @id @default(uuid())
+  phone         String    @unique
+  phoneVerified Boolean   @default(false)
+  email         String?   @unique
+  fullName      String?
+  role          UserRole  @default(buyer)
+  createdAt     DateTime  @default(now())
+  listings      Listing[]
+  enquiries     Enquiry[] @relation("BuyerEnquiries")
+  favorites     Favorite[]
+}
+
+model Listing {
+  id           String         @id @default(uuid())
+  owner        User           @relation(fields: [ownerId], references: [id])
+  ownerId      String
+  intent       ListingIntent
+  propertyType PropertyType
+  status       ListingStatus  @default(draft)
+  title        String?
+  description  String?
+  price        Decimal        @db.Decimal(14, 2)
+  areaSqft     Int?
+  bedrooms     Int?           // BHK
+  bathrooms    Int?
+  floor        Int?
+  furnishing   Furnishing?
+  amenities    String[]       @default([])
+  locality     Locality?      @relation(fields: [localityId], references: [id])
+  localityId   String?
+  lat          Float
+  lng          Float
+  qualityScore Decimal        @default(0) @db.Decimal(4, 2)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  expiresAt    DateTime       // structural freshness — auto-expire ~45 days
+  media        ListingMedia[]
+  enquiries    Enquiry[]
+  favorites    Favorite[]
+
+  @@index([status, intent, propertyType, price, bedrooms])
+  @@index([localityId])
+}
+
+model ListingMedia {
+  id        String   @id @default(uuid())
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId String
+  url       String
+  phash     String?  // perceptual hash — duplicate/fraud detection
+  width     Int?
+  height    Int?
+  ord       Int      @default(0)
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([listingId])
+  @@index([phash])
+}
+
+model Enquiry {
+  id                 String         @id @default(uuid())
+  listing            Listing        @relation(fields: [listingId], references: [id])
+  listingId          String
+  buyer              User           @relation("BuyerEnquiries", fields: [buyerId], references: [id])
+  buyerId            String
+  channel            EnquiryChannel
+  message            String?
+  createdAt          DateTime       @default(now())
+  listerRespondedAt  DateTime?      // powers response-rate guardrail
+
+  @@index([listingId])
+  @@index([buyerId])
+}
+
+model Favorite {
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId String
+  createdAt DateTime @default(now())
+
+  @@id([userId, listingId])
+}

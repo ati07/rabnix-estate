@@ -25,6 +25,7 @@ Every planning doc starts with a header block:
 | [roadmap.md](./roadmap.md) | 1.0.0 | Long-term strategy |
 | [data-model.sql](./data-model.sql) | 1.0.0 | Reference schema |
 | [api-contract.md](./api-contract.md) | 1.0.0 | API surface |
+| [build-plan-phase1.md](./build-plan-phase1.md) | 1.0.0 | Week-by-week MVP plan |
 
 ## Architecture Decision Records
 Significant, hard-to-reverse decisions get an ADR in [`decisions/`](./decisions). One decision per

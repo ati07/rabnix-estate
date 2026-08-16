@@ -7,6 +7,13 @@ its header — see [docs/README.md](./README.md) for the convention.
 ## [Unreleased]
 - _Pending: target city, team size, and seeding channel decisions (PRD §7)._
 
+## 2026-08-16 (later)
+### Added
+- `build-plan-phase1.md` **1.0.0** — week-by-week MVP build plan.
+- Next.js + Prisma/Postgres app scaffold (modules: auth/listings/search; API routes; SSR pages).
+  Typecheck and production build verified green. Launch city defaults to Pune (assumption, see
+  `.env.example`).
+
 ## 2026-08-16
 ### Added
 - `PRD.md` **1.0.0** — vision, users, scope by release, flows, metrics, risks.

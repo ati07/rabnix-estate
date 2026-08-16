@@ -1,0 +1,72 @@
+:root {
+  --bg: #0f1115;
+  --panel: #171a21;
+  --text: #e7e9ee;
+  --muted: #9aa3b2;
+  --accent: #3b82f6;
+  --border: #262b36;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.site-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+.brand { font-weight: 700; font-size: 1.15rem; color: var(--text); text-decoration: none; }
+.tagline { color: var(--muted); font-size: 0.85rem; }
+
+.container { max-width: 960px; margin: 0 auto; padding: 1.5rem 1.25rem; }
+
+.hero h1 { font-size: 1.9rem; margin: 0 0 0.35rem; }
+.hero p { color: var(--muted); margin: 0 0 1.25rem; }
+
+.searchbar {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.75rem;
+}
+.searchbar input, .searchbar select {
+  background: #0d0f14;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 0.7rem;
+  font-size: 0.95rem;
+}
+.searchbar input { flex: 1 1 220px; }
+.btn {
+  background: var(--accent);
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.6rem 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; }
+.card h3 { margin: 0 0 0.25rem; font-size: 1rem; }
+.card .price { color: var(--accent); font-weight: 700; }
+.card .meta { color: var(--muted); font-size: 0.85rem; }
+
+.notice { background: #1a1e27; border: 1px dashed var(--border); border-radius: 10px; padding: 1rem; color: var(--muted); margin-top: 1.5rem; }
+
+.site-footer { border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; padding: 1rem 1.25rem; text-align: center; }
+code { background: #0d0f14; padding: 0.1rem 0.35rem; border-radius: 5px; }
