@@ -31,11 +31,16 @@ product, and the enquiry appears in both dashboards.
 
 ### Week 3 — Search & detail (demand)
 - [~] Search API: locality + filters + `bbox` done ("search this area" filters live listings by the
-      map viewport, plain Postgres lat/lng range). Postgres FTS + PostGIS radius still TODO.
+      map viewport, plain Postgres lat/lng range). Postgres FTS + **PostGIS radius deliberately
+      deferred** — they need the `postgis`/`pg_trgm` DB extensions (superuser to enable, not on
+      managed free tiers by default); the bbox range query is accurate enough at current scale, so
+      enabling extensions is a scale-driven upgrade, not Phase-1 blocking.
 - [x] Results UI: synced map + list (Leaflet + OSM, price-bubble pins, hover/click sync,
       load-more pagination) + a filter/sort bar (intent, type, BHK, price, sort)
 - [x] Locality autocomplete (typo-tolerant, `/api/localities/search`). In-memory ranking
-      (prefix > substring > edit-distance ≤2) over the small locality set; pg_trgm is the upgrade path.
+      (prefix > substring > edit-distance ≤2) over the small locality set — O(localities) per
+      keystroke, fine for one city. `pg_trgm` is the deferred upgrade once the locality set is large
+      enough to warrant an index (same extension-availability caveat as PostGIS above).
 - [x] Listing detail: gallery, key-facts grid, amenities chips, single-marker Leaflet mini-map,
       similar homes (same locality + intent, ±40% price band)
 
