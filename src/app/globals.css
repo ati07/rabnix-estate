@@ -85,7 +85,8 @@ a { color: var(--primary); }
   display: flex;
   align-items: center;
   gap: 0.85rem;
-  padding: 0.8rem 1.5rem;
+  /* Full-bleed background, but inner content aligned to the shared page column. */
+  padding: 0.8rem max(1.5rem, calc(50vw - var(--page-half) + 1.5rem));
   background: var(--bg);
   border-bottom: 1px solid var(--border);
   box-shadow: 0 1px 2px rgba(15, 42, 67, 0.04);
@@ -133,7 +134,11 @@ a { color: var(--primary); }
 @media (max-width: 820px) { .primary-nav { display: none; } }
 .linkbtn { background: none; border: 0; color: var(--primary); font-weight: 600; font-size: 0.9rem; cursor: pointer; padding: 0; font-family: inherit; }
 
-.container { max-width: 1120px; margin: 0 auto; padding: 1.75rem 1.5rem; }
+/* Shared page column. Header, container, and the full-bleed hero all align their content
+   to this same left edge (--page-half = max-width / 2), so the logo, hero heading, and
+   every section share one gutter — like the DOMUS reference. */
+:root { --page-half: 660px; }
+.container { max-width: calc(var(--page-half) * 2); margin: 0 auto; padding: 1.75rem 1.5rem; }
 
 /* ── Buttons ──────────────────────────────────────────────────────────── */
 .btn {
@@ -197,8 +202,8 @@ a.btn { display: inline-flex; text-decoration: none; }
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   margin-top: -1.75rem;
-  /* …while keeping the copy aligned to the 1120px page column. */
-  padding: 5rem max(1.5rem, calc(50vw - 560px + 1.5rem)) 4.75rem;
+  /* …while keeping the copy aligned to the shared page column. */
+  padding: 5rem max(1.5rem, calc(50vw - var(--page-half) + 1.5rem)) 4.75rem;
   min-height: 520px;
   display: flex;
   align-items: center;
@@ -207,7 +212,7 @@ a.btn { display: inline-flex; text-decoration: none; }
     linear-gradient(to right, rgba(248, 250, 252, 0.97) 0%, rgba(248, 250, 252, 0.9) 30%, rgba(248, 250, 252, 0.42) 52%, rgba(248, 250, 252, 0) 70%),
     url("/hero-bg.jpg") center center / cover no-repeat;
 }
-.hero-copy { max-width: 820px; position: relative; z-index: 1; }
+.hero-copy { max-width: 940px; position: relative; z-index: 1; }
 .hero h1 {
   font-size: clamp(2.1rem, 4vw, 3.1rem); line-height: 1.08; letter-spacing: -0.03em;
   font-weight: 800; margin: 0 0 0.8rem; color: var(--brand-navy);
@@ -217,7 +222,7 @@ a.btn { display: inline-flex; text-decoration: none; }
 
 /* Tabbed search card sits in the hero's left column (Buy/Rent/Commercial/New Projects). */
 .hero-search {
-  max-width: 780px; margin: 0;
+  max-width: 900px; margin: 0;
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
