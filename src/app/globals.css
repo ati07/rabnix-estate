@@ -263,6 +263,86 @@ a.btn { display: inline-flex; text-decoration: none; }
 }
 .supply-cta .section-title { margin-top: 0; }
 
+/* ── Portal bands (alternating full-width sections) ───────────────────── */
+.band { margin: 0 -1.5rem; padding: 2.5rem 1.5rem; }
+.band-tint { background: #eef3f8; }
+.band > :first-child { margin-top: 0; }
+
+/* ── Carousels / rails ────────────────────────────────────────────────── */
+.rail-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.rail-head .section-title { margin: 0; }
+.rail-head .section-sub { margin: 0.15rem 0 0; }
+.rail-controls { display: flex; align-items: center; gap: 0.5rem; flex: 0 0 auto; }
+.rail-seeall { color: var(--primary); font-weight: 700; font-size: 0.9rem; text-decoration: none; white-space: nowrap; }
+.rail-seeall:hover { text-decoration: underline; }
+.rail-btn { width: 34px; height: 34px; border-radius: 999px; border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: 1.2rem; line-height: 1; cursor: pointer; box-shadow: var(--shadow-sm); display: grid; place-items: center; }
+.rail-btn:hover { border-color: var(--primary); color: var(--primary); }
+.rail-track { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.5rem; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.rail-track::-webkit-scrollbar { display: none; }
+
+/* ── Property card (rich, used in rails) ──────────────────────────────── */
+.pcard { flex: 0 0 262px; scroll-snap-align: start; display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; text-decoration: none; color: inherit; box-shadow: var(--shadow-sm); transition: box-shadow 0.18s, transform 0.18s, border-color 0.18s; }
+.pcard:hover { box-shadow: var(--shadow-md); border-color: #d3dae4; transform: translateY(-2px); }
+.pcard-body { padding: 0.85rem 0.95rem 1rem; display: flex; flex-direction: column; gap: 0.2rem; }
+.pcard-price { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.01em; }
+.pcard-price-suffix { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+.pcard-title { font-weight: 700; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pcard-specs { color: var(--muted); font-size: 0.85rem; }
+.pcard-loc { color: var(--muted); font-size: 0.82rem; margin-top: 0.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pcard-foot { margin-top: 0.6rem; border-top: 1px solid var(--border); padding-top: 0.55rem; }
+.pcard-cta { color: var(--primary); font-weight: 700; font-size: 0.85rem; }
+
+/* ── Gradient thumbnail (photo stand-in) ──────────────────────────────── */
+.thumb { position: relative; height: 158px; display: grid; place-items: center; background-size: cover; }
+.thumb-tall { height: 190px; }
+.thumb-icon { font-size: 2.6rem; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25)); }
+.thumb-badge { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.92); color: var(--text); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.2rem 0.55rem; border-radius: 999px; box-shadow: var(--shadow-sm); }
+
+/* ── Home-loan banner (demo) ──────────────────────────────────────────── */
+.loan-banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; background: linear-gradient(120deg, #063e2c, #0e9f6e); color: #fff; border-radius: var(--radius-lg); padding: 1.75rem 2rem; }
+.loan-banner-text h2 { margin: 0 0 0.3rem; font-size: 1.4rem; }
+.loan-banner-text p { margin: 0 0 1rem; color: rgba(255,255,255,0.9); }
+.loan-banner-text .btn { background: #fff; color: var(--primary-dark); }
+.loan-banner-text .btn:hover { background: #eafaf3; }
+.loan-banner-banks { display: flex; flex-wrap: wrap; gap: 0.5rem; max-width: 340px; }
+.loan-bank { background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.28); color: #fff; border-radius: 8px; padding: 0.35rem 0.7rem; font-size: 0.82rem; font-weight: 700; }
+
+/* ── City insights (demo) ─────────────────────────────────────────────── */
+.insights .section-title { margin-top: 0; }
+.insights .stat-grid { margin: 1rem 0 1.5rem; }
+.stat-trend { color: var(--success); font-size: 0.78rem; font-weight: 700; }
+.rates-table { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--panel); }
+.rates-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0.5rem; padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+.rates-row:last-child { border-bottom: 0; }
+.rates-head { background: #f6f8fa; color: var(--muted); font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; }
+.rates-trend { color: var(--success); font-weight: 700; }
+
+/* ── Agents (demo) ────────────────────────────────────────────────────── */
+.agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-top: 1rem; }
+.agent-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.15rem; text-align: center; box-shadow: var(--shadow-sm); }
+.agent-avatar { display: inline-grid; place-items: center; width: 56px; height: 56px; border-radius: 999px; color: #fff; font-weight: 800; background-size: cover; margin-bottom: 0.6rem; }
+.agent-name { font-weight: 700; }
+.agent-agency { color: var(--muted); font-size: 0.85rem; }
+.agent-meta { font-size: 0.82rem; margin-top: 0.35rem; font-weight: 600; }
+.agent-loc { color: var(--muted); font-size: 0.8rem; margin-top: 0.15rem; }
+
+/* ── Guide articles (demo) ────────────────────────────────────────────── */
+.article-card { flex: 0 0 262px; scroll-snap-align: start; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
+.article-thumb { position: relative; height: 130px; background-size: cover; }
+.article-cat { position: absolute; bottom: 10px; left: 10px; background: rgba(255,255,255,0.92); color: var(--text); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.2rem 0.55rem; border-radius: 999px; }
+.article-body { padding: 0.85rem 0.95rem 1rem; }
+.article-body h3 { margin: 0 0 0.5rem; font-size: 0.95rem; line-height: 1.35; }
+.article-read { color: var(--muted); font-size: 0.8rem; }
+
+/* ── Testimonials (demo) ──────────────────────────────────────────────── */
+.testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-top: 1rem; }
+.testimonial { margin: 0; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.35rem; box-shadow: var(--shadow-sm); }
+.testimonial blockquote { margin: 0 0 1rem; font-size: 0.98rem; line-height: 1.5; }
+.testimonial figcaption { display: flex; align-items: center; gap: 0.7rem; }
+.testimonial-avatar { display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 999px; color: #fff; font-weight: 800; font-size: 0.85rem; background-size: cover; flex: 0 0 auto; }
+.testimonial figcaption strong { display: block; }
+.testimonial-role { color: var(--muted); font-size: 0.82rem; }
+
 /* ── Cards / grids ────────────────────────────────────────────────────── */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
 .card {

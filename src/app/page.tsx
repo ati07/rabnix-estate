@@ -1,8 +1,18 @@
 import Link from "next/link";
 import { LocalitySearch } from "./search/LocalitySearch";
 import { BrowseSections } from "./BrowseSections";
+import { ListingRail } from "@/components/ListingRail";
+import { FeaturedProjects } from "@/components/demo/FeaturedProjects";
+import { HomeLoanBanner } from "@/components/demo/HomeLoanBanner";
+import { CityInsights } from "@/components/demo/CityInsights";
+import { TopAgents } from "@/components/demo/TopAgents";
+import { RealEstateGuide } from "@/components/demo/RealEstateGuide";
+import { Testimonials } from "@/components/demo/Testimonials";
 
 // Landing + search entry. The search form GETs /search (which renders the synced map+list).
+// Below the hero, a portal-style stack of alternating bands — real inventory carousels + browse
+// chips mixed with clearly-marked DEMO sections (projects, agents, insights, guide, testimonials)
+// so the page reads "full" like MagicBricks/99acres. See src/modules/demo/dummy.ts to strip demo.
 const city = process.env.NEXT_PUBLIC_DEFAULT_CITY ?? "your city";
 
 export default function HomePage() {
@@ -47,7 +57,51 @@ export default function HomePage() {
         </div>
       </div>
 
-      <BrowseSections cityName={city} showFresh />
+      <div className="band">
+        <ListingRail
+          title={`Freshly listed in ${city}`}
+          subtitle="The newest verified homes on Rabnix"
+          sort="newest"
+          badge="New"
+        />
+      </div>
+
+      <div className="band band-tint">
+        <FeaturedProjects cityName={city} />
+      </div>
+
+      <div className="band">
+        <HomeLoanBanner />
+      </div>
+
+      <div className="band band-tint">
+        <ListingRail
+          title={`Handpicked homes in ${city}`}
+          subtitle="Top-quality listings, sorted by completeness & trust"
+          sort="relevance"
+          badge="Verified"
+        />
+      </div>
+
+      <div className="band">
+        <CityInsights cityName={city} />
+      </div>
+
+      <div className="band band-tint">
+        <BrowseSections cityName={city} />
+      </div>
+
+      <div className="band">
+        <TopAgents cityName={city} />
+      </div>
+
+      <div className="band band-tint">
+        <RealEstateGuide />
+      </div>
+
+      <div className="band">
+        <Testimonials />
+      </div>
 
       <div className="supply-cta">
         <h2 className="section-title">Own a property?</h2>
