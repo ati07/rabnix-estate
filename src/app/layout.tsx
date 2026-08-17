@@ -33,12 +33,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en">
       <body>
         <header className="site-header">
-          <Link className="brand" href="/">Rabnix Estate</Link>
+          <Link className="brand" href="/">
+            <span className="brand-mark">R</span>
+            Rabnix Estate
+          </Link>
           <span className="tagline">Trust-first home search</span>
           <nav className="site-nav">
             <Link href="/dashboard">Dashboard</Link>
-            <Link href="/post">Post a property</Link>
             {user?.role === "admin" && <Link href="/admin">Admin</Link>}
+            <Link className="nav-cta" href="/post">Post property</Link>
             {user ? (
               <>
                 <span className="nav-user">{user.fullName ?? user.email ?? user.phone}</span>
