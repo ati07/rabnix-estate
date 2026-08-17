@@ -5,6 +5,9 @@ import { searchListings } from "@/modules/search/searchListings";
 import { LocalitySearch } from "./LocalitySearch";
 import { SearchResults, type SearchResult } from "./SearchResults";
 import { SaveSearchButton } from "./SaveSearchButton";
+import { BrowseSections } from "../BrowseSections";
+
+const CITY = process.env.NEXT_PUBLIC_DEFAULT_CITY ?? "your city";
 
 const PROPERTY_TYPES = [
   ["apartment", "Apartment"],
@@ -177,6 +180,8 @@ export default async function SearchPage({
       <p style={{ marginTop: "1.5rem" }}>
         <Link href="/">← New search</Link>
       </p>
+
+      <BrowseSections cityName={CITY} />
     </section>
   );
 }

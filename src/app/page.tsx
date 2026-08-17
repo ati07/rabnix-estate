@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LocalitySearch } from "./search/LocalitySearch";
+import { BrowseSections } from "./BrowseSections";
 
 // Landing + search entry. The search form GETs /search (which renders the synced map+list).
 const city = process.env.NEXT_PUBLIC_DEFAULT_CITY ?? "your city";
@@ -46,11 +47,15 @@ export default function HomePage() {
         </div>
       </div>
 
-      <h2 className="section-title">Own a property?</h2>
-      <p className="section-sub">
-        List it free and reach genuine buyers — no broker spam, faster enquiries.
-      </p>
-      <Link className="btn" href="/post">Post your property</Link>
+      <BrowseSections cityName={city} showFresh />
+
+      <div className="supply-cta">
+        <h2 className="section-title">Own a property?</h2>
+        <p className="section-sub">
+          List it free and reach genuine buyers — no broker spam, faster enquiries.
+        </p>
+        <Link className="btn" href="/post">Post your property</Link>
+      </div>
     </section>
   );
 }
