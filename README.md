@@ -79,15 +79,22 @@ configured" error.
    you've sent (with the lister's phone + whether they responded), and **Saved searches** — tap
    **☆ Save this search** on `/search` to store the current filters; the dashboard shows each with a
    re-run link and a **new-matches** count since the last alert.
-7. **Moderation queue:** posting now submits a listing as `pending` (awaits review, not yet public).
-   Dev-login as an **admin** (`POST /api/dev/login {"role":"admin"}`) → the nav shows **Moderation**
-   → open **/admin/moderation** to see pending listings with photos, key facts, and auto-flags
-   (duplicate image via pHash, one-phone-many, price-outlier vs the locality median, spam text with
-   off-platform contact info). **Approve** → the listing goes `live` and appears in
-   search; **Reject** with a reason → owner sees the reason on their dashboard. Signed-in buyers can
-   **⚑ Report** a listing (spam/fraud/duplicate/…) from its detail page; reports plus auto-flags feed
-   a **risk score** (0–100) that sorts the queue riskiest-first. Sensitive routes (login, register,
-   contact, report) are **rate-limited** (429 on abuse).
+7. **Admin console:** posting now submits a listing as `pending` (awaits review, not yet public).
+   Dev-login as an **admin** (`POST /api/dev/login {"role":"admin"}`) → the nav shows **Admin** →
+   **/admin** opens a tabbed console: **Overview** (KPI cards — pending/live/rejected/expired, open
+   reports, users, 7-day enquiries, 30-day lister response rate), **Moderation**, **Reports**,
+   **History**.
+   - **Moderation** (`/admin/moderation`): pending listings with photos, key facts, and auto-flags
+     (duplicate image via pHash, one-phone-many, price-outlier vs the locality median, spam text with
+     off-platform contact info). **Approve** → `live` and appears in search; **Reject** with a reason
+     → owner sees it on their dashboard. Reports + auto-flags feed a **risk score** (0–100) that sorts
+     the queue riskiest-first.
+   - **Reports** (`/admin/reports`): open buyer reports across **all** listings (incl. already-live
+     ones), grouped by listing with a reason breakdown → **Take down** (→ rejected, resolves reports)
+     or **Dismiss reports**. Signed-in buyers file reports via **⚑ Report** on a listing's detail page.
+   - **History** (`/admin/history`): audit trail of approve/reject/takedown decisions (who + when +
+     reason) with **Reopen for review** to undo a call.
+   Sensitive routes (login, register, contact, report) are **rate-limited** (429 on abuse).
 8. **Auto-expiry:** listings carry an `expiresAt` (~45 days). `POST /api/cron/expire-listings` flips
    any `live` listing past its expiry to `expired` (returns `{ expired: n }`); search also hides
    stale listings defensively. Point a daily scheduler at it (Vercel Cron, a GitHub Actions cron, or

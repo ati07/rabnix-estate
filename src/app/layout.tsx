@@ -38,7 +38,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <nav className="site-nav">
             <Link href="/dashboard">Dashboard</Link>
             <Link href="/post">Post a property</Link>
-            {user?.role === "admin" && <Link href="/admin/moderation">Moderation</Link>}
+            {user?.role === "admin" && <Link href="/admin">Admin</Link>}
             {user ? (
               <>
                 <span className="nav-user">{user.fullName ?? user.email ?? user.phone}</span>

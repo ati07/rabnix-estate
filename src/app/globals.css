@@ -111,6 +111,18 @@ a.btn { display: inline-block; text-decoration: none; text-align: center; }
 .save-search-done { color: #34d399; font-size: 0.85rem; font-weight: 600; }
 .results-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
 
+.admin-tabs { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+.admin-tabs a { padding: 0.5rem 0.85rem; color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; font-size: 0.9rem; }
+.admin-tabs a:hover { color: var(--text); border-bottom-color: var(--accent); }
+
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.75rem; }
+.stat { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.9rem 1rem; border: 1px solid var(--border); border-radius: 12px; background: var(--card, #12141a); text-decoration: none; color: inherit; }
+a.stat:hover { border-color: var(--accent); }
+.stat .num { font-size: 1.6rem; font-weight: 700; }
+.stat .label { color: var(--muted); font-size: 0.8rem; }
+
+.report-details { margin: 0.5rem 0 0; padding-left: 1.1rem; color: var(--muted); font-size: 0.85rem; }
+
 .saved-search { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
 .saved-search .label { font-weight: 600; }
 .saved-search .spacer { flex: 1; }
