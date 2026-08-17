@@ -37,5 +37,8 @@ coverage/
 # Claude Code — keep shared settings, ignore local/personal ones
 .claude/settings.local.json
 
+# Scratch — throwaway local analysis, third-party page dumps, etc. (never commit)
+.scratch/
+
 # Misc
 *.local
