@@ -120,3 +120,72 @@ export const demoTestimonials: DemoTestimonial[] = [
 ];
 
 export const demoLoanBanks: string[] = ["SBI", "HDFC", "ICICI", "Axis", "Kotak", "PNB", "Bank of Baroda"];
+
+// ── Property-detail (PDP) demo data ───────────────────────────────────────────
+// Icons for amenities; unknown slugs fall back to DEFAULT_AMENITY_ICON.
+export const AMENITY_ICON: Record<string, string> = {
+  parking: "🅿️",
+  lift: "🛗",
+  power_backup: "🔌",
+  security: "🛡️",
+  gym: "🏋️",
+  swimming_pool: "🏊",
+  garden: "🌳",
+  club_house: "🏛️",
+  play_area: "🛝",
+  water_supply: "🚰",
+  gas_pipeline: "🔥",
+  wifi: "📶",
+  cctv: "📹",
+  fire_safety: "🧯",
+  air_conditioning: "❄️",
+  intercom: "☎️",
+};
+export const DEFAULT_AMENITY_ICON = "✅";
+
+// When a listing has no amenities recorded, show these so the section never looks bare (DEMO).
+export const DEMO_DEFAULT_AMENITIES = ["parking", "lift", "power_backup", "security", "water_supply", "cctv"];
+
+export type DemoAttr = { label: string; value: string };
+
+// Extra "More details" attributes 99acres shows that our schema doesn't store — fabricated but
+// deterministic per listing (DEMO). Swap for real fields once captured at posting time.
+export function demoPropertyExtras(seed: string): DemoAttr[] {
+  const pick = <T,>(arr: T[], salt: number) => arr[(hash(seed) + salt) % arr.length];
+  return [
+    { label: "Facing", value: pick(["East", "West", "North", "North-East", "South-East"], 1) },
+    { label: "Age of construction", value: pick(["New", "0-1 years", "1-5 years", "5-10 years"], 2) },
+    { label: "Parking", value: pick(["1 Covered", "2 Covered", "1 Open", "Open + Covered"], 3) },
+    { label: "Water availability", value: "24 Hours Available" },
+    { label: "Power backup", value: pick(["Full", "Partial", "Full"], 4) },
+    { label: "Overlooking", value: pick(["Garden / Park", "Main Road", "Club", "Pool"], 5) },
+    { label: "Flooring", value: pick(["Vitrified", "Marble", "Ceramic", "Wooden"], 6) },
+    { label: "Balconies", value: pick(["1", "2", "2", "3"], 7) },
+  ];
+}
+
+export type DemoReviewBar = { label: string; score: number };
+export type DemoLocalityReview = { rating: number; count: number; bars: DemoReviewBar[] };
+
+export function demoLocalityReview(seed: string): DemoLocalityReview {
+  const jitter = (base: number, salt: number) => Math.round((base + ((hash(seed) + salt) % 10) / 10) * 10) / 10;
+  return {
+    rating: 4.1,
+    count: 40 + (hash(seed) % 120),
+    bars: [
+      { label: "Connectivity", score: jitter(3.8, 1) },
+      { label: "Safety", score: jitter(3.9, 2) },
+      { label: "Environment", score: jitter(3.7, 3) },
+      { label: "Lifestyle", score: jitter(3.6, 4) },
+      { label: "Value for money", score: jitter(3.8, 5) },
+    ],
+  };
+}
+
+export type DemoResidentReview = { id: string; name: string; tenure: string; rating: number; text: string };
+
+export const demoResidentReviews: DemoResidentReview[] = [
+  { id: "rv1", name: "Sandeep M.", tenure: "Owner · 3+ years", rating: 4.5, text: "Peaceful, well-connected area with daily-needs shops within walking distance. Water and power supply are reliable." },
+  { id: "rv2", name: "Priya K.", tenure: "Rented · 2 years", rating: 4.0, text: "Good for families — parks nearby and safe for kids in the evening. Auto/cab availability could be better at night." },
+  { id: "rv3", name: "Imran S.", tenure: "Lived · 5+ years", rating: 4.2, text: "Great schools and hospitals close by. Traffic on the main road during peak hours is the only downside." },
+];
