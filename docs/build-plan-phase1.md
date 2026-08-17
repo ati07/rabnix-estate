@@ -69,8 +69,9 @@ product, and the enquiry appears in both dashboards.
       Provider-neutral facade wired (`src/lib/observability.ts`, `instrumentation.ts`) emitting
       `enquiry_created`/`listing_reported`; PostHog/Sentry SDKs + dashboards are the env-gated swap-in.
 - [~] Perf pass: LCP image `priority`; non-LCP images lazy (next/image default) + WebP + blur
-      placeholders; map lazy-init (`next/dynamic ssr:false`). 4G LCP <2.5s target still needs a
-      prod-build Lighthouse run to confirm.
+      placeholders; map lazy-init (`next/dynamic ssr:false`, now inside a client wrapper so the
+      production `next build` compiles cleanly). 4G LCP <2.5s target still needs a prod-build
+      Lighthouse run to confirm.
 - [x] **Saved-search alerts** (pulled forward from Phase 2 on request). "☆ Save this search" on
       `/search` stores the current filters (`SavedSearch` model, query = the /search URL shape);
       the dashboard shows each saved search with a re-run link + a "new matches since last alert"
