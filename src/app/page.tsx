@@ -22,7 +22,9 @@ export default function HomePage() {
       <div className="hero">
         <div className="hero-copy">
           <h1>
-            Find your perfect place to call <span className="hero-em">home</span>
+            Find your perfect
+            <br />
+            place to call <span className="hero-em">home</span>
           </h1>
           <p>
             Explore verified properties for sale, rent and investment across {city}&apos;s

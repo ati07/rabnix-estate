@@ -73,10 +73,10 @@ export function HeroSearch({ city }: { city: string }) {
       {budgetMax && <input type="hidden" name="priceMax" value={budgetMax} />}
 
       <div className="hero-fields">
-        <label className="hero-field hero-field-loc">
-          <span className="hero-field-label">Location</span>
-          <LocalitySearch placeholder={`Enter location — e.g. Wakad, Baner (${city})`} />
-        </label>
+        <div className="hero-field hero-field-loc">
+          <span className="hero-field-pin" aria-hidden="true">📍</span>
+          <LocalitySearch placeholder={`Enter location in ${city}`} />
+        </div>
 
         <label className="hero-field">
           <span className="hero-field-label">Property Type</span>
