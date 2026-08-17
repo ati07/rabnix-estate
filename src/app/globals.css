@@ -207,13 +207,7 @@ a.btn { display: inline-flex; text-decoration: none; }
     linear-gradient(to right, rgba(248, 250, 252, 0.97) 0%, rgba(248, 250, 252, 0.9) 30%, rgba(248, 250, 252, 0.42) 52%, rgba(248, 250, 252, 0) 70%),
     url("/hero-bg.jpg") center center / cover no-repeat;
 }
-.hero-copy { max-width: 600px; position: relative; z-index: 1; }
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 0.45rem;
-  background: var(--primary-tint); color: var(--primary-dark);
-  font-weight: 700; font-size: 0.82rem;
-  padding: 0.4rem 0.85rem; border-radius: 999px; margin-bottom: 1.1rem;
-}
+.hero-copy { max-width: 820px; position: relative; z-index: 1; }
 .hero h1 {
   font-size: clamp(2.1rem, 4vw, 3.1rem); line-height: 1.08; letter-spacing: -0.03em;
   font-weight: 800; margin: 0 0 0.8rem; color: var(--brand-navy);
@@ -221,46 +215,44 @@ a.btn { display: inline-flex; text-decoration: none; }
 .hero-em { color: var(--primary); }
 .hero p { color: var(--muted); font-size: 1.08rem; max-width: 520px; margin: 0 0 1.6rem; }
 
-/* Search card sits in the hero's left column */
-.searchbar {
-  display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;
-  max-width: 640px; margin: 0;
+/* Tabbed search card sits in the hero's left column (Buy/Rent/Commercial/New Projects). */
+.hero-search {
+  max-width: 780px; margin: 0;
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 0.6rem;
-  box-shadow: var(--shadow-md);
+  padding: 0.5rem 1.1rem 1.1rem;
+  box-shadow: var(--shadow-lg);
 }
-.searchbar input, .searchbar select {
-  background: var(--panel-2); color: var(--text);
+.hero-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem 1.6rem; border-bottom: 1px solid var(--border); }
+.hero-tabs button {
+  appearance: none; background: none; border: none; cursor: pointer; font-family: inherit;
+  padding: 0.85rem 0.15rem; margin-bottom: -1px;
+  font-size: 0.95rem; font-weight: 600; color: var(--muted);
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.hero-tabs button:hover { color: var(--text); }
+.hero-tabs button.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
+
+.hero-fields { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.6rem; margin-top: 1rem; }
+.hero-field { display: flex; flex-direction: column; gap: 0.3rem; flex: 1 1 150px; min-width: 0; }
+.hero-field-loc { flex: 2 1 240px; }
+.hero-field-label { font-size: 0.78rem; font-weight: 700; color: var(--muted); letter-spacing: 0.01em; }
+.hero-field select,
+.hero-field .autocomplete input {
+  width: 100%;
+  background: var(--panel); color: var(--text);
   border: 1px solid var(--border); border-radius: var(--radius-sm);
   padding: 0.72rem 0.8rem; font-size: 0.95rem; font-family: inherit;
-  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
-.searchbar input:focus, .searchbar select:focus {
-  outline: none; background: var(--panel); border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-ring);
+.hero-field select:focus,
+.hero-field .autocomplete input:focus {
+  outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-ring);
 }
-.searchbar input { flex: 1 1 200px; }
-.searchbar select { flex: 1 1 120px; }
-.searchbar .btn { flex: 0 0 auto; padding: 0.72rem 1.6rem; }
-
-/* Popular quick links under the search card */
-.hero-popular { display: flex; flex-wrap: wrap; align-items: center; gap: 0.55rem; margin-top: 1.1rem; color: var(--muted); font-size: 0.9rem; }
-.hero-popular > span { font-weight: 600; }
-.hero-popular a { color: var(--text); text-decoration: none; background: var(--panel); border: 1px solid var(--border); padding: 0.3rem 0.75rem; border-radius: 999px; font-weight: 600; }
-.hero-popular a:hover { border-color: var(--primary); color: var(--primary); }
-
-/* Floating "verified" badge over the hero photo */
-.hero-media-badge {
-  display: inline-flex; align-items: center; gap: 0.55rem;
-  margin-top: 1.4rem;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid var(--border); border-radius: 999px;
-  padding: 0.5rem 0.9rem;
-  font-weight: 700; font-size: 0.82rem; color: var(--brand-navy);
-  box-shadow: var(--shadow-md);
-}
-.hero-media-badge .dot { width: 9px; height: 9px; border-radius: 999px; background: var(--primary); box-shadow: 0 0 0 4px var(--primary-ring); }
+.hero-field .autocomplete { width: 100%; }
+.hero-search-btn { flex: 0 0 auto; padding: 0.72rem 1.7rem; align-self: flex-end; }
 
 @media (max-width: 880px) {
   .hero {
