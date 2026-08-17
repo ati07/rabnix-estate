@@ -15,22 +15,23 @@
   --grad-primary: linear-gradient(135deg, #12b981 0%, #0e9f6e 55%, #0b855c 100%);
 
   /* Surfaces */
-  --bg: #f2f5f9;
+  --bg: #ffffff;            /* clean white canvas */
+  --band-tint: #f5f7fa;     /* light gray for alternating landing bands */
   --panel: #ffffff;
-  --panel-2: #fbfcfe; /* faint tint for layered surfaces */
+  --panel-2: #f8fafc;       /* faint tint for layered surfaces */
   --input-bg: #ffffff;
 
   /* Text */
   --text: #131b27;
   --muted: #667085;
 
-  /* Lines & shadows — softer, more layered for depth */
+  /* Lines & shadows — a touch deeper so white panels still pop on a white canvas */
   --border: #e6eaf0;
   --border-strong: #d6dce5;
-  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
-  --shadow: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
-  --shadow-md: 0 8px 24px -6px rgba(16, 24, 40, 0.14), 0 4px 8px -4px rgba(16, 24, 40, 0.06);
-  --shadow-lg: 0 24px 48px -12px rgba(16, 24, 40, 0.22), 0 8px 16px -8px rgba(16, 24, 40, 0.1);
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.07), 0 0 0 1px rgba(16, 24, 40, 0.02);
+  --shadow: 0 1px 3px rgba(16, 24, 40, 0.1), 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-md: 0 8px 24px -6px rgba(16, 24, 40, 0.16), 0 4px 8px -4px rgba(16, 24, 40, 0.07);
+  --shadow-lg: 0 24px 48px -12px rgba(16, 24, 40, 0.24), 0 8px 16px -8px rgba(16, 24, 40, 0.1);
   --shadow-primary: 0 8px 20px -6px rgba(14, 159, 110, 0.5);
 
   /* Shape — rounder, more modern */
@@ -53,10 +54,6 @@ body {
   font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "ss01";
   background: var(--bg);
-  background-image:
-    radial-gradient(900px 500px at 100% -5%, rgba(14, 159, 110, 0.07), transparent 60%),
-    radial-gradient(700px 400px at -5% 0%, rgba(37, 99, 235, 0.05), transparent 55%);
-  background-attachment: fixed;
   color: var(--text);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
@@ -341,7 +338,7 @@ a.btn { display: inline-flex; text-decoration: none; }
 
 /* ── Portal bands (alternating full-width sections) ───────────────────── */
 .band { margin: 0 -1.5rem; padding: 2.5rem 1.5rem; }
-.band-tint { background: #eef3f8; }
+.band-tint { background: var(--band-tint); }
 .band > :first-child { margin-top: 0; }
 
 /* ── Carousels / rails ────────────────────────────────────────────────── */
