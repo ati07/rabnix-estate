@@ -42,3 +42,6 @@ coverage/
 
 # Misc
 *.local
+
+# Local backups (e.g. globals_old.css) — keep on disk, never commit
+*_old.*
