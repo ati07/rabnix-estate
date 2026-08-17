@@ -80,9 +80,9 @@ export default function HomePage() {
         <FeaturedProjects cityName={city} />
       </div>
 
-      <div className="band">
+      {/* <div className="band">
         <HomeLoanBanner />
-      </div>
+      </div> */}
 
       <div className="band band-tint">
         <ListingRail

@@ -43,5 +43,8 @@ coverage/
 # Misc
 *.local
 
-# Local backups (e.g. globals_old.css) — keep on disk, never commit
+# Local backups (e.g. globals_old.css, "globals copy.css") — keep on disk, never commit
 *_old.*
+* copy.*
+# Uncompressed source PNGs for hero backgrounds (committed .jpg is used instead)
+/public/post-hero-bg.png

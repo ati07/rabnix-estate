@@ -46,7 +46,7 @@ export default async function PostPage() {
     <div className="post-page">
       <section className="post-hero">
         <div className="post-hero-copy">
-          <span className="post-hero-badge">100% Free · 0% Brokerage</span>
+          <span className="post-hero-badge">100% Free · No Brokerage</span>
           <h1>
             Post your property to <span className="post-hero-em">sell or rent</span> — for free
           </h1>
