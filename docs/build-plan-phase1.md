@@ -60,6 +60,10 @@ product, and the enquiry appears in both dashboards.
       login/register/contact/report (429). Buyer **report** flow (`POST /api/listings/:id/report`,
       `Report` model) feeds a moderation **risk score** (auto-flags + report pressure, 0–100) that
       sorts the queue riskiest-first. Redis rate-limit store is the multi-node upgrade.
+- [x] **Admin console** (`/admin`, tabbed): Overview KPI cards (listings by status, open reports,
+      users, 7-day enquiries, 30-day lister response rate); Reports inbox (open reports across all
+      listings incl. live → take down / dismiss); Moderation history (audit trail + reopen); User
+      management (suspend/unsuspend — a suspended user is treated as logged out — + grant/revoke admin).
 - [ ] Manual + agent-partnership **supply seeding** in ONE dense locality (ops, not code)
 - [~] Analytics funnel dashboards vs. North Star (qualified enquiries/wk) + response-rate guardrail.
       Provider-neutral facade wired (`src/lib/observability.ts`, `instrumentation.ts`) emitting

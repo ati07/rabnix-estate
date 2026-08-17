@@ -9,7 +9,10 @@ export async function getSessionUser() {
   if (!token) return null;
   const claims = await verifySession(token);
   if (!claims) return null;
-  return prisma.user.findUnique({ where: { id: claims.sub } });
+  const user = await prisma.user.findUnique({ where: { id: claims.sub } });
+  // A suspended user is treated as logged out — no session, no actions.
+  if (user?.suspendedAt) return null;
+  return user;
 }
 
 // Resolve the current user only if they are an admin, else null.

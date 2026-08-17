@@ -95,6 +95,7 @@ model User {
   passwordHash  String?   // email + password login; OTP/SMS added later
   fullName      String?
   role          UserRole  @default(buyer)
+  suspendedAt   DateTime? // admin suspension — a suspended user is treated as logged out
   createdAt     DateTime  @default(now())
   listings      Listing[]
   enquiries     Enquiry[] @relation("BuyerEnquiries")

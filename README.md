@@ -83,7 +83,7 @@ configured" error.
    Dev-login as an **admin** (`POST /api/dev/login {"role":"admin"}`) → the nav shows **Admin** →
    **/admin** opens a tabbed console: **Overview** (KPI cards — pending/live/rejected/expired, open
    reports, users, 7-day enquiries, 30-day lister response rate), **Moderation**, **Reports**,
-   **History**.
+   **History**, **Users**.
    - **Moderation** (`/admin/moderation`): pending listings with photos, key facts, and auto-flags
      (duplicate image via pHash, one-phone-many, price-outlier vs the locality median, spam text with
      off-platform contact info). **Approve** → `live` and appears in search; **Reject** with a reason
@@ -94,6 +94,9 @@ configured" error.
      or **Dismiss reports**. Signed-in buyers file reports via **⚑ Report** on a listing's detail page.
    - **History** (`/admin/history`): audit trail of approve/reject/takedown decisions (who + when +
      reason) with **Reopen for review** to undo a call.
+   - **Users** (`/admin/users`): every user with role + activity counts → **Suspend** (a suspended
+     user is treated as logged out) / **Unsuspend** and **Make admin** / **Revoke admin**. You can't
+     act on your own account.
    Sensitive routes (login, register, contact, report) are **rate-limited** (429 on abuse).
 8. **Auto-expiry:** listings carry an `expiresAt` (~45 days). `POST /api/cron/expire-listings` flips
    any `live` listing past its expiry to `expired` (returns `{ expired: n }`); search also hides
