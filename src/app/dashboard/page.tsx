@@ -137,18 +137,16 @@ export default async function DashboardPage() {
           {favorites.map((f) => (
             <div className="card" key={f.listingId}>
               <Link href={`/listings/${f.listing.id}`}>
-                {f.listing.media[0] && (
-                  <Image
-                    className="card-thumb"
-                    src={f.listing.media[0].url}
-                    alt={f.listing.title ?? "Listing photo"}
-                    width={400}
-                    height={300}
-                    sizes="(max-width: 700px) 100vw, 350px"
-                    placeholder={f.listing.media[0].blurDataUrl ? "blur" : "empty"}
-                    blurDataURL={f.listing.media[0].blurDataUrl ?? undefined}
-                  />
-                )}
+                <Image
+                  className="card-thumb"
+                  src={f.listing.media[0]?.url || "/dummy-property.jpg"}
+                  alt={f.listing.title ?? "Listing photo"}
+                  width={400}
+                  height={300}
+                  sizes="(max-width: 700px) 100vw, 350px"
+                  placeholder={f.listing.media[0]?.blurDataUrl ? "blur" : "empty"}
+                  blurDataURL={f.listing.media[0]?.blurDataUrl ?? undefined}
+                />
                 <h3>{f.listing.title ?? `${f.listing.bedrooms ?? ""} BHK ${f.listing.propertyType}`}</h3>
               </Link>
               <p className="price">

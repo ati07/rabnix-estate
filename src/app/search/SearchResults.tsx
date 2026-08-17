@@ -134,18 +134,16 @@ export function SearchResults({
             onMouseEnter={() => setActiveId(r.id)}
           >
             <Link href={`/listings/${r.id}`} className="result-link">
-              {r.mediaUrl && (
-                <Image
-                  className="card-thumb"
-                  src={r.mediaUrl}
-                  alt={r.title ?? "Listing photo"}
-                  width={400}
-                  height={300}
-                  sizes="(max-width: 700px) 100vw, 350px"
-                  placeholder={r.blurDataUrl ? "blur" : "empty"}
-                  blurDataURL={r.blurDataUrl ?? undefined}
-                />
-              )}
+              <Image
+                className="card-thumb"
+                src={r.mediaUrl || "/dummy-property.jpg"}
+                alt={r.title ?? "Listing photo"}
+                width={400}
+                height={300}
+                sizes="(max-width: 700px) 100vw, 350px"
+                placeholder={r.blurDataUrl ? "blur" : "empty"}
+                blurDataURL={r.blurDataUrl ?? undefined}
+              />
               <h3>{r.title ?? `${r.bedrooms ?? ""} BHK`}</h3>
               <div className="price">
                 {currency} {r.price}

@@ -1,26 +1,37 @@
-import { thumbGradient } from "@/modules/demo/dummy";
+import Image from "next/image";
 
-// Deterministic gradient thumbnail — a self-contained stand-in for a photo (no external images).
-// The same seed always yields the same gradient, so a card looks stable across renders.
+// Property thumbnail. Shows the real primary photo when a listing has one; otherwise falls back to
+// a shared dummy photo (public/dummy-property.jpg) with the property-type icon overlaid, so cards
+// without an uploaded image still look like listings instead of blank boxes.
 export function Thumb({
-  seed,
   icon,
   badge,
   tall = false,
+  imageUrl,
+  blurDataUrl,
 }: {
-  seed: string;
+  seed: string; // kept for call-site compatibility (was the gradient seed)
   icon: string;
   badge?: string;
   tall?: boolean;
+  imageUrl?: string | null;
+  blurDataUrl?: string | null;
 }) {
+  const hasPhoto = !!imageUrl;
+  const src = imageUrl || "/dummy-property.jpg";
   return (
-    <div
-      className={`thumb${tall ? " thumb-tall" : ""}`}
-      style={{ backgroundImage: thumbGradient(seed) }}
-      aria-hidden
-    >
+    <div className={`thumb${tall ? " thumb-tall" : ""}`}>
+      <Image
+        className="thumb-img"
+        src={src}
+        alt=""
+        fill
+        sizes="(max-width: 700px) 100vw, 320px"
+        placeholder={blurDataUrl ? "blur" : "empty"}
+        blurDataURL={blurDataUrl ?? undefined}
+      />
       {badge && <span className="thumb-badge">{badge}</span>}
-      <span className="thumb-icon">{icon}</span>
+      {!hasPhoto && <span className="thumb-icon">{icon}</span>}
     </div>
   );
 }

@@ -140,6 +140,38 @@ a { color: var(--primary); }
 :root { --page-half: 660px; }
 .container { max-width: calc(var(--page-half) * 2); margin: 0 auto; padding: 1.75rem 1.5rem; }
 
+/* ── Buttons ──────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: var(--grad-primary);
+  color: #fff;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 1.25rem;
+  font-weight: 650;
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+  box-shadow: var(--shadow-primary);
+}
+.btn:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: 0 10px 24px -6px var(--primary-glow); }
+.btn:active { transform: translateY(0); filter: brightness(0.98); }
+.btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--primary-ring); }
+a.btn { display: inline-flex; text-decoration: none; }
+.btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+.btn-danger { background: var(--danger); box-shadow: 0 8px 20px -6px rgba(217, 45, 32, 0.45); }
+.btn-danger:hover { box-shadow: 0 10px 24px -6px rgba(217, 45, 32, 0.5); }
+.btn-ghost {
+  background: var(--panel);
+  color: var(--primary);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
+}
+.btn-ghost:hover { background: var(--primary-tint); border-color: var(--primary); filter: none; box-shadow: var(--shadow-sm); }
 
 /* ── Tabs ─────────────────────────────────────────────────────────────── */
 .tabs { display: flex; gap: 0.5rem; margin: 1rem 0 0.5rem; }
@@ -163,614 +195,83 @@ a { color: var(--primary); }
 .error { color: var(--danger); font-size: 0.9rem; margin: 0; }
 
 /* ── Hero (full-viewport-width photo background) ──────────────────────── */
-/* ─────────────────────────────────────────────────────────────────────
-   HERO
-   ───────────────────────────────────────────────────────────────────── */
-
 .hero {
   position: relative;
   overflow: hidden;
-
-  /* Full viewport width */
+  /* Break out of the centered container to span the full viewport width… */
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   margin-top: -1.75rem;
-
-  min-height: 550px;
-
+  /* …while keeping the copy aligned to the shared page column. */
+  padding: 5rem max(1.5rem, calc(50vw - var(--page-half) + 1.5rem)) 4.75rem;
+  min-height: 520px;
   display: flex;
   align-items: center;
-
   color: var(--text);
-
-  /*
-   * The white gradient is intentional.
-   * It keeps the left side clean for the heading/search while
-   * allowing the property image to remain visible on the right.
-   */
   background:
-    linear-gradient(
-      90deg,
-      rgba(248, 250, 252, 0.99) 0%,
-      rgba(248, 250, 252, 0.97) 24%,
-      rgba(248, 250, 252, 0.90) 39%,
-      rgba(248, 250, 252, 0.62) 52%,
-      rgba(248, 250, 252, 0.18) 68%,
-      rgba(248, 250, 252, 0) 82%
-    ),
-    /* url("/hero-bg.jpg") center center / cover no-repeat; */
-    url("/hero-bg.jpg") center right / contain no-repeat;
-
+    linear-gradient(to right, rgba(248, 250, 252, 0.97) 0%, rgba(248, 250, 252, 0.9) 30%, rgba(248, 250, 252, 0.42) 52%, rgba(248, 250, 252, 0) 70%),
+    url("/hero-bg.jpg") center center / cover no-repeat;
 }
-
-
-/*
- * Keep the content aligned with the rest of the website.
- */
-/* .hero-copy {
-  position: relative;
-  z-index: 2;
-
-  width: 100%;
-  max-width: 1120px;
-
-  margin: 0 auto;
-
-  padding: 4.5rem 1.5rem 3.5rem;
-} */
-
-.hero-copy {
-  position: relative;
-  z-index: 2;
-
-  width: 100%;
-  max-width: none;
-
-  margin: 0;
-
-  /*
-   * Use the same horizontal alignment as the rest
-   * of the website/navbar.
-   */
-  padding-top: 4.5rem;
-  padding-bottom: 3.5rem;
-  padding-left: max(1.5rem, calc(52vw - var(--page-half)));
-  padding-right: max(1.5rem, calc(50vw - var(--page-half)));
-}
-
-/* ─────────────────────────────────────────────────────────────────────
-   HERO HEADING
-   ───────────────────────────────────────────────────────────────────── */
-
-/* .hero h1 {
-  margin: 0 0 0.9rem;
-
-  max-width: 600px;
-
-  color: var(--brand-navy);
-
-  font-size: clamp(2.6rem, 4vw, 3.5rem);
-  line-height: 1.05;
-  letter-spacing: -0.045em;
-
-  font-weight: 800;
-} */
+.hero-copy { max-width: 940px; position: relative; z-index: 1; }
 .hero h1 {
-  max-width: 600px;
-
-  margin: 0 0 0.8rem;
-
-  color: var(--brand-navy);
-
-  font-size: clamp(2.5rem, 3.5vw, 3.25rem);
-  line-height: 1.06;
-  letter-spacing: -0.045em;
-
-  font-weight: 800;
+  font-size: clamp(2.1rem, 4vw, 3.1rem); line-height: 1.08; letter-spacing: -0.03em;
+  font-weight: 800; margin: 0 0 0.8rem; color: var(--brand-navy);
 }
-.hero-em {
-  color: var(--primary);
-}
+.hero-em { color: var(--primary); }
+.hero p { color: var(--muted); font-size: 1.08rem; max-width: 520px; margin: 0 0 1.6rem; }
 
-/* .hero p {
-  max-width: 560px;
-
-  margin: 0 0 1.8rem;
-
-  color: var(--muted);
-
-  font-size: 1rem;
-  line-height: 1.6;
-} */
-
-.hero p {
-  max-width: 570px;
-
-  margin: 0 0 1.7rem;
-
-  color: var(--muted);
-
-  font-size: 1rem;
-  line-height: 1.55;
-}
-
-/* ─────────────────────────────────────────────────────────────────────
-   SEARCH CARD
-   ───────────────────────────────────────────────────────────────────── */
-
-/* .hero-search {
-  width: 100%;
-  max-width: 1120px;
-
-  margin: 0;
-
-  padding: 0.35rem 1.15rem 1.05rem;
-
-  background: rgba(255, 255, 255, 0.98);
-
-  border: 1px solid rgba(226, 232, 240, 0.95);
-  border-radius: 18px;
-
-  box-shadow:
-    0 18px 45px rgba(15, 42, 67, 0.12),
-    0 4px 14px rgba(15, 42, 67, 0.06);
-
-  backdrop-filter: blur(8px);
-} */
-
+/* Tabbed search card sits in the hero's left column (Buy/Rent/Commercial/New Projects). */
 .hero-search {
-  width: 100%;
-  max-width: 1120px;
-
-  margin: 0;
-
-  padding: 0.35rem 1.15rem 1.05rem;
-
-  background: rgba(255, 255, 255, 0.98);
-
-  /* border: 1px solid rgba(226, 232, 240, 0.95); */
-  border-radius: 18px;
-
-  box-shadow:
-    0 18px 45px rgba(15, 42, 67, 0.12),
-    0 4px 14px rgba(15, 42, 67, 0.06);
-
-  backdrop-filter: blur(8px);
-}
-
-/* ─────────────────────────────────────────────────────────────────────
-   SEARCH TABS
-   ───────────────────────────────────────────────────────────────────── */
-.hero-search-wrapper {
-  width: 100%;
-  max-width: 1120px;
-}
-
-.hero-tabs {
-  display: flex;
-  align-items: center;
-
-  gap: 2rem;
-
-  height: 58px;
-
-  /* border-bottom: 1px solid var(--border); */
-}
-
-.hero-tabs button {
-  position: relative;
-
-  appearance: none;
-
-  background: transparent;
-  border: 0;
-
-  padding: 0.85rem 0.1rem;
-
-  margin: 0;
-
-  color: var(--muted);
-
-  font-family: inherit;
-  font-size: 0.95rem;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition:
-    color 0.2s ease,
-    opacity 0.2s ease;
-}
-
-.hero-tabs button::after {
-  content: "";
-
-  position: absolute;
-
-  left: 0;
-  right: 0;
-  bottom: -1px;
-
-  height: 2px;
-
-  background: var(--primary);
-
-  transform: scaleX(0);
-
-  transform-origin: center;
-
-  transition: transform 0.2s ease;
-}
-
-.hero-tabs button:hover {
-  color: var(--brand-navy);
-}
-
-.hero-tabs button.active {
-  color: var(--primary);
-  font-weight: 700;
-}
-
-.hero-tabs button.active::after {
-  transform: scaleX(1);
-}
-
-
-/* ─────────────────────────────────────────────────────────────────────
-   SEARCH FIELDS
-   ───────────────────────────────────────────────────────────────────── */
-
-.hero-fields {
-  display: grid;
-
-  /*
-   * This is the important change.
-   * The fields will stay on ONE ROW on desktop.
-   */
-  grid-template-columns:
-    minmax(240px, 1.7fr)
-    minmax(150px, 1fr)
-    minmax(150px, 1fr)
-    minmax(130px, 0.9fr)
-    120px;
-
-  gap: 0.65rem;
-
-  margin-top: 1rem;
-}
-
-
-/* Individual field */
-
-.hero-field {
-  min-width: 0;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  min-height: 66px;
-
-  padding: 0.55rem 0.9rem;
-
-  background: #fff;
-
+  max-width: 900px; margin: 0;
+  background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 10px;
-
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  border-radius: var(--radius-lg);
+  padding: 0.5rem 1.1rem 1.1rem;
+  box-shadow: var(--shadow-lg);
 }
-
-.hero-field:hover {
-  border-color: #cbd5e1;
+.hero-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem 1.6rem; border-bottom: 1px solid var(--border); }
+.hero-tabs button {
+  appearance: none; background: none; border: none; cursor: pointer; font-family: inherit;
+  padding: 0.85rem 0.15rem; margin-bottom: -1px;
+  font-size: 0.95rem; font-weight: 600; color: var(--muted);
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
 }
+.hero-tabs button:hover { color: var(--text); }
+.hero-tabs button.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
 
-.hero-field:focus-within {
-  border-color: var(--primary);
-
-  box-shadow:
-    0 0 0 3px var(--primary-ring);
+.hero-fields { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0.6rem; margin-top: 1rem; }
+/* Each field is its own bordered box; the label sits inside, above a borderless control. */
+.hero-field {
+  display: flex; flex-direction: column; justify-content: center; gap: 0.1rem;
+  flex: 1 1 150px; min-width: 0;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.85rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
-
-
-/* Location */
-
-.hero-field-loc {
-  flex-direction: row;
-  align-items: center;
-
-  gap: 0.65rem;
-}
-
-.hero-field-pin {
-  flex: 0 0 auto;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  color: var(--primary);
-
-  font-size: 1rem;
-  line-height: 1;
-}
-
-
-/* Field labels */
-
-.hero-field-label {
-  display: block;
-
-  margin-bottom: 0.2rem;
-
-  color: var(--muted);
-
-  font-size: 0.7rem;
-  line-height: 1.1;
-
-  font-weight: 700;
-
-  letter-spacing: 0.01em;
-}
-
-
-/* Select + autocomplete */
-
+.hero-field:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-ring); }
+.hero-field-loc { flex: 2.2 1 240px; flex-direction: row; align-items: center; gap: 0.5rem; }
+.hero-field-pin { color: var(--primary); font-size: 1rem; line-height: 1; }
+.hero-field-label { font-size: 0.72rem; font-weight: 700; color: var(--muted); letter-spacing: 0.01em; }
 .hero-field select,
 .hero-field .autocomplete input {
   width: 100%;
-
-  min-width: 0;
-
-  padding: 0;
-
-  background: transparent;
-
-  color: var(--brand-navy);
-
-  border: none;
-  outline: none;
-
-  font-family: inherit;
-
-  font-size: 0.95rem;
-  line-height: 1.3;
-
-  font-weight: 600;
+  background: transparent; color: var(--text);
+  border: none; outline: none;
+  padding: 0.1rem 0; font-size: 0.98rem; font-weight: 600; font-family: inherit;
 }
+.hero-field select { cursor: pointer; }
+.hero-field .autocomplete { flex: 1 1 auto; min-width: 0; }
+.hero-search-btn { flex: 0 0 auto; align-self: stretch; padding: 0 1.8rem; }
 
-.hero-field select {
-  cursor: pointer;
-}
-
-.hero-field .autocomplete {
-  flex: 1 1 auto;
-
-  min-width: 0;
-}
-
-
-/* ─────────────────────────────────────────────────────────────────────
-   SEARCH BUTTON
-   ───────────────────────────────────────────────────────────────────── */
-
-.hero-search-btn {
-  width: 120px;
-  min-height: 66px;
-
-  align-self: stretch;
-
-  padding: 0 1rem;
-
-  border-radius: 10px;
-
-  white-space: nowrap;
-}
-
-/* Popular quick-searches, just under the search card. */
-.hero-popular {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.55rem;
-  margin-top: 1.15rem;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-.hero-popular > span { font-weight: 700; color: var(--text); }
-.hero-popular a {
-  color: var(--text);
-  text-decoration: none;
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid var(--border);
-  padding: 0.32rem 0.8rem;
-  border-radius: 999px;
-  font-weight: 600;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
-}
-.hero-popular a:hover { border-color: var(--primary); color: var(--primary); background: #fff; }
-
-
-/* ─────────────────────────────────────────────────────────────────────
-   BUTTON
-   ───────────────────────────────────────────────────────────────────── */
-
-.btn {
-  display: inline-flex;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 0.4rem;
-
-  min-height: 42px;
-
-  padding: 0.65rem 1.25rem;
-
-  background: var(--grad-primary);
-
-  color: #fff;
-
-  border: 1px solid transparent;
-
-  border-radius: var(--radius-sm);
-
-  font-family: inherit;
-
-  font-size: 0.95rem;
-  font-weight: 650;
-
-  cursor: pointer;
-
-  box-shadow: var(--shadow-primary);
-
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    filter 0.15s ease;
-}
-
-.btn:hover {
-  filter: brightness(1.04);
-
-  transform: translateY(-1px);
-
-  box-shadow:
-    0 8px 20px rgba(24, 166, 125, 0.2);
-}
-
-.btn:active {
-  transform: translateY(0);
-}
-
-
-/* ─────────────────────────────────────────────────────────────────────
-   TABLET
-   ───────────────────────────────────────────────────────────────────── */
-
-@media (max-width: 1100px) {
+@media (max-width: 880px) {
   .hero {
-    min-height: 520px;
-
+    min-height: 0; padding: 3rem 1.4rem;
     background:
-      linear-gradient(
-        90deg,
-        rgba(248, 250, 252, 0.98) 0%,
-        rgba(248, 250, 252, 0.92) 45%,
-        rgba(248, 250, 252, 0.55) 70%,
-        rgba(248, 250, 252, 0.15) 100%
-      ),
+      linear-gradient(rgba(248, 250, 252, 0.92), rgba(248, 250, 252, 0.92)),
       url("/hero-bg.jpg") center / cover no-repeat;
-  }
-
-  .hero-copy {
-    max-width: 100%;
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
-
-  .hero-fields {
-    grid-template-columns:
-      minmax(200px, 1.5fr)
-      minmax(140px, 1fr)
-      minmax(140px, 1fr);
-
-    grid-auto-rows: minmax(62px, auto);
-  }
-
-  .hero-field-loc {
-    grid-column: span 3;
-  }
-
-  .hero-search-btn {
-    width: auto;
-    min-height: 60px;
-  }
-}
-
-
-/* ─────────────────────────────────────────────────────────────────────
-   MOBILE
-   ───────────────────────────────────────────────────────────────────── */
-
-@media (max-width: 700px) {
-  .hero {
-    min-height: 0;
-
-    margin-top: -1rem;
-
-    background:
-      linear-gradient(
-        rgba(248, 250, 252, 0.94),
-        rgba(248, 250, 252, 0.96)
-      ),
-      url("/hero-bg.jpg") center / cover no-repeat;
-  }
-
-  .hero-copy {
-    padding: 3rem 1rem 2.5rem;
-  }
-
-  .hero h1 {
-    max-width: 100%;
-
-    font-size: clamp(2.25rem, 9vw, 3rem);
-
-    line-height: 1.05;
-  }
-
-  .hero p {
-    font-size: 0.95rem;
-
-    margin-bottom: 1.4rem;
-  }
-
-  .hero-search {
-    padding: 0.35rem 0.75rem 0.8rem;
-
-    border-radius: 14px;
-  }
-
-  .hero-tabs {
-    gap: 1.2rem;
-
-    height: 52px;
-
-    overflow-x: auto;
-
-    scrollbar-width: none;
-  }
-
-  .hero-tabs::-webkit-scrollbar {
-    display: none;
-  }
-
-  .hero-tabs button {
-    flex: 0 0 auto;
-
-    font-size: 0.88rem;
-  }
-
-  .hero-fields {
-    display: flex;
-    flex-direction: column;
-
-    gap: 0.6rem;
-  }
-
-  .hero-field,
-  .hero-field-loc {
-    width: 100%;
-
-    min-height: 62px;
-  }
-
-  .hero-search-btn {
-    width: 100%;
-
-    min-height: 52px;
   }
 }
 
@@ -1008,10 +509,9 @@ a { color: var(--primary); }
 .pcard-cta { color: var(--primary); font-weight: 700; font-size: 0.85rem; }
 
 /* ── Gradient thumbnail (photo stand-in) ──────────────────────────────── */
-.thumb { position: relative; height: 158px; display: grid; place-items: center; overflow: hidden; background: var(--panel-2); }
+.thumb { position: relative; height: 158px; display: grid; place-items: center; background-size: cover; }
 .thumb-tall { height: 190px; }
-.thumb-img { object-fit: cover; }
-.thumb-icon { position: relative; font-size: 2.6rem; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35)); }
+.thumb-icon { font-size: 2.6rem; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25)); }
 .thumb-badge { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.92); color: var(--text); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.2rem 0.55rem; border-radius: 999px; box-shadow: var(--shadow-sm); }
 
 /* ── Home-loan banner (demo) ──────────────────────────────────────────── */

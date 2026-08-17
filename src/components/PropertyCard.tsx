@@ -13,6 +13,8 @@ export function PropertyCard({
   badge,
   seed,
   icon,
+  imageUrl,
+  blurDataUrl,
   cta = "View details",
 }: {
   href: string;
@@ -24,11 +26,13 @@ export function PropertyCard({
   badge?: string;
   seed: string;
   icon: string;
+  imageUrl?: string | null;
+  blurDataUrl?: string | null;
   cta?: string;
 }) {
   return (
     <Link className="pcard" href={href}>
-      <Thumb seed={seed} icon={icon} badge={badge} />
+      <Thumb seed={seed} icon={icon} badge={badge} imageUrl={imageUrl} blurDataUrl={blurDataUrl} />
       <div className="pcard-body">
         <div className="pcard-price">
           {price}

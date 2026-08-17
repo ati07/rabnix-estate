@@ -54,6 +54,8 @@ export async function ListingRail({
             badge={badge}
             seed={l.id}
             icon={PROPERTY_TYPE_ICON[l.propertyType] ?? "🏠"}
+            imageUrl={l.media[0]?.url ?? null}
+            blurDataUrl={l.media[0]?.blurDataUrl ?? null}
           />
         );
       })}
