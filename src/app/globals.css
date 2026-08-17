@@ -247,6 +247,25 @@ a.btn { display: inline-flex; text-decoration: none; }
 .budget-row { display: flex; align-items: flex-start; gap: 0.85rem; margin-bottom: 0.75rem; }
 .budget-row-label { flex: 0 0 auto; min-width: 3.5rem; padding-top: 0.55rem; color: var(--muted); font-size: 0.82rem; font-weight: 700; }
 
+/* ── Explore sub-menu (MagicBricks-style tabbed facets) ───────────────── */
+.browse-tabs > .section-title { margin: 0 0 1rem; }
+.browse-tabs-body { display: grid; grid-template-columns: 210px 1fr; align-items: stretch; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
+.browse-tabs-nav { display: flex; flex-direction: column; background: #f6f8fa; border-right: 1px solid var(--border); }
+.browse-tab { text-align: left; background: none; border: 0; border-left: 3px solid transparent; padding: 0.85rem 1.15rem; font-size: 0.92rem; font-weight: 600; color: var(--muted); cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+.browse-tab:hover { color: var(--text); background: #eef2f6; }
+.browse-tab.is-active { color: var(--primary-dark); background: var(--panel); border-left-color: var(--primary); font-weight: 700; }
+.browse-tabs-panel { padding: 1.4rem 1.5rem; }
+.browse-group { margin-bottom: 1.15rem; }
+.browse-group:last-child { margin-bottom: 0; }
+.browse-group-label { display: block; color: var(--muted); font-size: 0.78rem; font-weight: 700; margin-bottom: 0.6rem; text-transform: uppercase; letter-spacing: 0.03em; }
+@media (max-width: 640px) {
+  .browse-tabs-body { grid-template-columns: 1fr; }
+  .browse-tabs-nav { flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--border); scrollbar-width: none; }
+  .browse-tabs-nav::-webkit-scrollbar { display: none; }
+  .browse-tab { border-left: 0; border-bottom: 3px solid transparent; white-space: nowrap; }
+  .browse-tab.is-active { border-left: 0; border-bottom-color: var(--primary); }
+}
+
 .quicklinks { border-top: 1px solid var(--border); padding-top: 1.5rem; }
 .quicklinks-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
 .quicklinks-col h3 { margin: 0 0 0.6rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
