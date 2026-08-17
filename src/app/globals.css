@@ -85,11 +85,9 @@ a { color: var(--primary); }
   align-items: center;
   gap: 0.85rem;
   padding: 0.8rem 1.5rem;
-  background: rgba(255, 255, 255, 0.78);
-  -webkit-backdrop-filter: saturate(180%) blur(14px);
-  backdrop-filter: saturate(180%) blur(14px);
-  border-bottom: 1px solid rgba(230, 234, 240, 0.8);
-  box-shadow: 0 1px 0 rgba(16, 24, 40, 0.02);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgba(15, 42, 67, 0.04);
 }
 .brand {
   display: inline-flex;
@@ -190,23 +188,21 @@ a.btn { display: inline-flex; text-decoration: none; }
 .form .row > label { flex: 1; }
 .error { color: var(--danger); font-size: 0.9rem; margin: 0; }
 
-/* ── Hero (two-column, light) ─────────────────────────────────────────── */
+/* ── Hero (full-bleed photo background) ───────────────────────────────── */
 .hero {
   position: relative;
   overflow: hidden;
   margin: -1.75rem -1.5rem 0;
-  padding: 3.5rem 1.5rem 3.25rem;
-  display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  gap: 3rem;
+  padding: 4.75rem 1.5rem 4.5rem;
+  min-height: 480px;
+  display: flex;
   align-items: center;
   color: var(--text);
   background:
-    radial-gradient(680px 380px at 8% -10%, rgba(var(--primary-rgb), 0.10), transparent 60%),
-    radial-gradient(720px 420px at 100% 0%, rgba(var(--brand-navy-rgb), 0.07), transparent 60%),
-    var(--bg);
+    linear-gradient(to right, rgba(248, 250, 252, 0.97) 0%, rgba(248, 250, 252, 0.9) 34%, rgba(248, 250, 252, 0.4) 58%, rgba(248, 250, 252, 0) 80%),
+    url("/hero-bg.jpg") right center / cover no-repeat;
 }
-.hero-copy { max-width: 620px; }
+.hero-copy { max-width: 600px; position: relative; z-index: 1; }
 .hero-badge {
   display: inline-flex; align-items: center; gap: 0.45rem;
   background: var(--primary-tint); color: var(--primary-dark);
@@ -249,18 +245,10 @@ a.btn { display: inline-flex; text-decoration: none; }
 .hero-popular a { color: var(--text); text-decoration: none; background: var(--panel); border: 1px solid var(--border); padding: 0.3rem 0.75rem; border-radius: 999px; font-weight: 600; }
 .hero-popular a:hover { border-color: var(--primary); color: var(--primary); }
 
-/* Hero image (self-contained SVG; drop a real photo at /public/hero-home.svg to replace) */
-.hero-media {
-  position: relative;
-  min-height: 400px;
-  border-radius: var(--radius-lg);
-  background: url("/hero-home.svg") center/cover no-repeat, var(--primary-tint);
-  box-shadow: var(--shadow-lg);
-  overflow: hidden;
-}
+/* Floating "verified" badge over the hero photo */
 .hero-media-badge {
-  position: absolute; left: 1rem; bottom: 1rem;
   display: inline-flex; align-items: center; gap: 0.55rem;
+  margin-top: 1.4rem;
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid var(--border); border-radius: 999px;
   padding: 0.5rem 0.9rem;
@@ -270,8 +258,12 @@ a.btn { display: inline-flex; text-decoration: none; }
 .hero-media-badge .dot { width: 9px; height: 9px; border-radius: 999px; background: var(--primary); box-shadow: 0 0 0 4px var(--primary-ring); }
 
 @media (max-width: 880px) {
-  .hero { grid-template-columns: 1fr; gap: 1.75rem; padding: 2.5rem 1.4rem; }
-  .hero-media { min-height: 240px; }
+  .hero {
+    min-height: 0; padding: 3rem 1.4rem;
+    background:
+      linear-gradient(rgba(248, 250, 252, 0.92), rgba(248, 250, 252, 0.92)),
+      url("/hero-bg.jpg") center / cover no-repeat;
+  }
 }
 
 /* Trust strip under the hero */

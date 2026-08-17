@@ -53,9 +53,7 @@ export default function HomePage() {
             <Link href="/search?bhk=2">2 BHK</Link>
             <Link href="/search?bhk=3">3 BHK</Link>
           </div>
-        </div>
 
-        <div className="hero-media">
           <span className="hero-media-badge">
             <span className="dot" /> Every listing verified before it goes live
           </span>
