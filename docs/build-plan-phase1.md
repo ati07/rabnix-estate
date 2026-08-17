@@ -67,11 +67,18 @@ product, and the enquiry appears in both dashboards.
 - [~] Perf pass: LCP image `priority`; non-LCP images lazy (next/image default) + WebP + blur
       placeholders; map lazy-init (`next/dynamic ssr:false`). 4G LCP <2.5s target still needs a
       prod-build Lighthouse run to confirm.
+- [x] **Saved-search alerts** (pulled forward from Phase 2 on request). "☆ Save this search" on
+      `/search` stores the current filters (`SavedSearch` model, query = the /search URL shape);
+      the dashboard shows each saved search with a re-run link + a "new matches since last alert"
+      count (reusing `buildListingWhere`); `POST /api/cron/saved-search-alerts` (CRON_SECRET-guarded)
+      counts new matches per search, emits `saved_search_alert`, and advances `lastNotifiedAt`.
+      Email/push delivery is the swap-in.
 - [ ] Private beta → invite first buyers only after supply liquidity exists
 
 ## Cut lines (do NOT build in Phase 1)
-Saved-search alerts, verified badge, agent paid plans, multi-city, analytics-for-listers — all
-Phase 2+. Guard scope ruthlessly.
+Verified badge, agent paid plans, multi-city, analytics-for-listers — all Phase 2+. Guard scope
+ruthlessly. (Saved-search alerts were originally a cut line but were pulled forward on request —
+see Weeks 5–6.)
 
 ## Sequencing rule
 **Supply before demand.** Weeks 1–2 stand up posting; do not run buyer acquisition until the seed

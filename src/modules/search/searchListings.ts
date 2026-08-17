@@ -24,9 +24,11 @@ export const SearchParams = z.object({
 
 export type SearchInput = z.infer<typeof SearchParams>;
 
-export async function searchListings(input: SearchInput) {
+// The live-listing filter for a set of search params. Shared by searchListings and the
+// saved-search matcher so "what matches this search" is defined in exactly one place.
+export function buildListingWhere(input: SearchInput): Prisma.ListingWhereInput {
   const bbox = parseBbox(input.bbox);
-  const where: Prisma.ListingWhereInput = {
+  return {
     status: "live",
     expiresAt: { gt: new Date() }, // defensive: hide stale listings even before the expiry job runs
 
@@ -45,6 +47,10 @@ export async function searchListings(input: SearchInput) {
       },
     }),
   };
+}
+
+export async function searchListings(input: SearchInput) {
+  const where = buildListingWhere(input);
 
   const orderBy: Prisma.ListingOrderByWithRelationInput =
     input.sort === "price_asc"

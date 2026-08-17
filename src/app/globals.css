@@ -108,6 +108,13 @@ a.btn { display: inline-block; text-decoration: none; text-align: center; }
 .report-form select, .report-form input { background: #0d0f14; color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 0.4rem 0.5rem; font-size: 0.85rem; font-family: inherit; }
 .report-form input { flex: 1 1 160px; }
 .report-done { color: #34d399; font-size: 0.85rem; font-weight: 600; }
+.save-search-done { color: #34d399; font-size: 0.85rem; font-weight: 600; }
+.results-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
+
+.saved-search { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
+.saved-search .label { font-weight: 600; }
+.saved-search .spacer { flex: 1; }
+.badge-new { color: #34d399; border-color: #1f6f52; }
 
 .btn-danger { background: #b91c1c; }
 .btn-ghost { background: transparent; color: var(--accent); border: 1px solid var(--border); }

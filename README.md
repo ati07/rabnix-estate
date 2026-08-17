@@ -75,8 +75,10 @@ configured" error.
    `src/lib/storage.ts`.
 6. **Dashboard:** open **/dashboard**. As an owner you see your listings (status + enquiry counts)
    and enquiries received → **Mark responded** (sets `listerRespondedAt`, the response-rate
-   guardrail). As a buyer you see **Saved homes** (tap **♡ Save** on any listing) and the enquiries
-   you've sent (with the lister's phone + whether they responded).
+   guardrail). As a buyer you see **Saved homes** (tap **♡ Save** on any listing), the enquiries
+   you've sent (with the lister's phone + whether they responded), and **Saved searches** — tap
+   **☆ Save this search** on `/search` to store the current filters; the dashboard shows each with a
+   re-run link and a **new-matches** count since the last alert.
 7. **Moderation queue:** posting now submits a listing as `pending` (awaits review, not yet public).
    Dev-login as an **admin** (`POST /api/dev/login {"role":"admin"}`) → the nav shows **Moderation**
    → open **/admin/moderation** to see pending listings with photos, key facts, and auto-flags
@@ -90,6 +92,8 @@ configured" error.
    any `live` listing past its expiry to `expired` (returns `{ expired: n }`); search also hides
    stale listings defensively. Point a daily scheduler at it (Vercel Cron, a GitHub Actions cron, or
    OS cron/curl) and set `CRON_SECRET` in production (`Authorization: Bearer <CRON_SECRET>`).
+   `POST /api/cron/saved-search-alerts` (same CRON_SECRET guard) counts new matches for each saved
+   search since its last run and advances the watermark — dev-logs the alert; email/push is the swap-in.
 9. **Phone-OTP (deferred, optional):** `POST /api/auth/otp/request` then `/verify` — the code prints
    to the `npm run dev` console (dev stub). Real SMS-OTP login lands later.
 
@@ -100,7 +104,7 @@ for TDD. GitHub Actions ([.github/workflows/ci.yml](./.github/workflows/ci.yml))
 **lint + typecheck + test** on every push to `main` and every PR.
 
 ### Verified
-- `npm run lint` ✅ · `npm run typecheck` ✅ · `npm test` ✅ (57 tests) · `npm run build` ✅.
+- `npm run lint` ✅ · `npm run typecheck` ✅ · `npm test` ✅ (64 tests) · `npm run build` ✅.
 
 ### Implemented vs. TODO
 - **Wired:** **email + password auth** (`/login` — register/login/logout, JWT session cookie +
@@ -113,10 +117,11 @@ for TDD. GitHub Actions ([.github/workflows/ci.yml](./.github/workflows/ci.yml))
   pagination + "search this area"), **listing detail** (SSR — gallery, key facts, amenities,
   mini-map, similar homes), **SEO baseline** (per-listing metadata +
   schema.org JSON-LD, `sitemap.xml`, `robots.txt`), **contact → enquiry + phone reveal**, **dashboard** (`/dashboard` — lister: my listings +
-  enquiries received + respond; buyer: **saved homes** + enquiries I've sent), **auto-expiry job**
-  (`/api/cron/expire-listings`), landing search UI, sample-data seed.
+  enquiries received + respond; buyer: **saved homes** + **saved searches** (new-match counts) +
+  enquiries I've sent), **auto-expiry job** (`/api/cron/expire-listings`), **saved-search alerts**
+  (`/api/cron/saved-search-alerts`), landing search UI, sample-data seed.
 - **TODO (see build plan):** real SMS/OTP login, real CDN for media, PostGIS bbox/radius search +
-  pg_trgm autocomplete, saved-search alerts, anti-fraud scoring + rate limits. Marked with `TODO`
+  pg_trgm autocomplete, saved-search email/push delivery. Marked with `TODO`
   in code.
 
 ## Status

@@ -3,7 +3,10 @@ import Image from "next/image";
 import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { RespondButton } from "./RespondButton";
+import { RemoveSavedSearchButton } from "./RemoveSavedSearchButton";
 import { FavoriteButton } from "../listings/[id]/FavoriteButton";
+import { SavedQuery, savedSearchLabel, savedSearchHref } from "@/modules/search/savedSearch";
+import { newMatchCount } from "@/modules/search/savedSearchMatch";
 
 const CURRENCY = process.env.NEXT_PUBLIC_DEFAULT_CURRENCY ?? "INR";
 
@@ -26,12 +29,14 @@ export default async function DashboardPage() {
   let received: Awaited<ReturnType<typeof loadReceived>> = [];
   let favorites: Awaited<ReturnType<typeof loadFavorites>> = [];
   let sent: Awaited<ReturnType<typeof loadSent>> = [];
+  let savedSearches: Awaited<ReturnType<typeof loadSavedSearches>> = [];
   try {
-    [listings, received, favorites, sent] = await Promise.all([
+    [listings, received, favorites, sent, savedSearches] = await Promise.all([
       loadListings(user.id),
       loadReceived(user.id),
       loadFavorites(user.id),
       loadSent(user.id),
+      loadSavedSearches(user.id),
     ]);
   } catch {
     return (
@@ -189,7 +194,54 @@ export default async function DashboardPage() {
           ))}
         </ul>
       )}
+
+      <h2 style={{ marginTop: "1.75rem" }}>Saved searches</h2>
+      {savedSearches.length === 0 ? (
+        <div className="notice">
+          No saved searches. On <Link href="/search">search</Link>, tap{" "}
+          <strong>☆ Save this search</strong> to get new-match counts here.
+        </div>
+      ) : (
+        <div>
+          {savedSearches.map((s) => (
+            <div className="saved-search" key={s.id}>
+              <Link className="label" href={s.href}>
+                {s.label}
+              </Link>
+              {s.newMatches > 0 && (
+                <span className="badge badge-new">
+                  {s.newMatches} new match{s.newMatches === 1 ? "" : "es"}
+                </span>
+              )}
+              <span className="spacer" />
+              <RemoveSavedSearchButton id={s.id} />
+            </div>
+          ))}
+        </div>
+      )}
     </section>
+  );
+}
+
+async function loadSavedSearches(userId: string) {
+  const rows = await prisma.savedSearch.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+  });
+  // New-match count = live listings created since the last alert watermark. Skip rows whose stored
+  // query no longer parses (schema drift) rather than failing the whole dashboard.
+  return Promise.all(
+    rows.map(async (s) => {
+      const parsed = SavedQuery.safeParse(s.query);
+      const query = parsed.success ? parsed.data : {};
+      const newMatches = parsed.success ? await newMatchCount(query, s.lastNotifiedAt) : 0;
+      return {
+        id: s.id,
+        label: s.label ?? savedSearchLabel(query),
+        href: savedSearchHref(query),
+        newMatches,
+      };
+    }),
   );
 }
 

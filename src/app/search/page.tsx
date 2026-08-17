@@ -4,6 +4,7 @@ import { getSessionUser } from "@/lib/auth";
 import { searchListings } from "@/modules/search/searchListings";
 import { LocalitySearch } from "./LocalitySearch";
 import { SearchResults, type SearchResult } from "./SearchResults";
+import { SaveSearchButton } from "./SaveSearchButton";
 
 const PROPERTY_TYPES = [
   ["apartment", "Apartment"],
@@ -100,6 +101,17 @@ export default async function SearchPage({
   if (priceMin !== undefined) apiQuery.priceMin = String(priceMin);
   if (priceMax !== undefined) apiQuery.priceMax = String(priceMax);
 
+  // The human /search shape (locality name, `type`) we persist as a SavedSearch — it round-trips
+  // straight back into a /search link. Distinct from apiQuery (which carries the resolved localityId).
+  const saveQuery: Record<string, string> = {};
+  if (intent) saveQuery.intent = intent;
+  if (propertyType) saveQuery.type = propertyType;
+  if (bhk !== undefined) saveQuery.bhk = String(bhk);
+  if (priceMin !== undefined) saveQuery.priceMin = String(priceMin);
+  if (priceMax !== undefined) saveQuery.priceMax = String(priceMax);
+  if (sort !== "relevance") saveQuery.sort = sort;
+  if (sp.locality) saveQuery.locality = sp.locality;
+
   return (
     <section>
       <h1>Search results</h1>
@@ -138,11 +150,14 @@ export default async function SearchPage({
         <button className="btn" type="submit">Apply</button>
       </form>
 
-      <p className="meta">
-        {results.length}
-        {nextCursor ? "+" : ""} result{results.length === 1 ? "" : "s"}
-        {sp.locality ? ` in ${sp.locality}` : ""}
-      </p>
+      <div className="results-head">
+        <p className="meta">
+          {results.length}
+          {nextCursor ? "+" : ""} result{results.length === 1 ? "" : "s"}
+          {sp.locality ? ` in ${sp.locality}` : ""}
+        </p>
+        <SaveSearchButton query={saveQuery} isAuthed={isAuthed} />
+      </div>
 
       {results.length === 0 ? (
         <div className="notice">
