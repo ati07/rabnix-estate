@@ -64,6 +64,7 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.55;
+  overflow-x: clip; /* let full-bleed sections span 100vw without a horizontal scrollbar */
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -188,19 +189,23 @@ a.btn { display: inline-flex; text-decoration: none; }
 .form .row > label { flex: 1; }
 .error { color: var(--danger); font-size: 0.9rem; margin: 0; }
 
-/* ── Hero (full-bleed photo background) ───────────────────────────────── */
+/* ── Hero (full-viewport-width photo background) ──────────────────────── */
 .hero {
   position: relative;
   overflow: hidden;
-  margin: -1.75rem -1.5rem 0;
-  padding: 4.75rem 1.5rem 4.5rem;
-  min-height: 480px;
+  /* Break out of the centered container to span the full viewport width… */
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  margin-top: -1.75rem;
+  /* …while keeping the copy aligned to the 1120px page column. */
+  padding: 5rem max(1.5rem, calc(50vw - 560px + 1.5rem)) 4.75rem;
+  min-height: 520px;
   display: flex;
   align-items: center;
   color: var(--text);
   background:
-    linear-gradient(to right, rgba(248, 250, 252, 0.97) 0%, rgba(248, 250, 252, 0.9) 34%, rgba(248, 250, 252, 0.4) 58%, rgba(248, 250, 252, 0) 80%),
-    url("/hero-bg.jpg") right center / cover no-repeat;
+    linear-gradient(to right, rgba(248, 250, 252, 0.97) 0%, rgba(248, 250, 252, 0.9) 30%, rgba(248, 250, 252, 0.42) 52%, rgba(248, 250, 252, 0) 70%),
+    url("/hero-bg.jpg") center center / cover no-repeat;
 }
 .hero-copy { max-width: 600px; position: relative; z-index: 1; }
 .hero-badge {
