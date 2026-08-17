@@ -43,22 +43,27 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <header className="site-header">
           <Link className="brand" href="/">
             <span className="brand-mark">R</span>
-            Rabnix Estate
+            <span className="brand-name">Rabnix Estate</span>
           </Link>
-          <span className="tagline">Trust-first home search</span>
-          <nav className="site-nav">
-            <Link href="/dashboard">Dashboard</Link>
-            {user?.role === "admin" && <Link href="/admin">Admin</Link>}
-            <Link className="nav-cta" href="/post">Post property</Link>
+          <nav className="primary-nav">
+            <Link href="/search?intent=sale">Buy</Link>
+            <Link href="/search?intent=rent">Rent</Link>
+            <Link href="/post">Sell</Link>
+            <Link href="/search">Explore</Link>
+          </nav>
+          <div className="nav-actions">
+            <Link className="nav-link" href="/dashboard">♡ Saved</Link>
+            {user?.role === "admin" && <Link className="nav-link" href="/admin">Admin</Link>}
             {user ? (
               <>
                 <span className="nav-user">{user.fullName ?? user.email ?? user.phone}</span>
                 <LogoutButton />
               </>
             ) : (
-              <Link href="/login">Sign in</Link>
+              <Link className="nav-link" href="/login">Sign in</Link>
             )}
-          </nav>
+            <Link className="nav-cta" href="/post">Post Property</Link>
+          </div>
         </header>
         <main className="container">{children}</main>
         <footer className="site-footer">

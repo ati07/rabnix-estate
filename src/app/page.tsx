@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LocalitySearch } from "./search/LocalitySearch";
 import { BrowseSections } from "./BrowseSections";
 import { ListingRail } from "@/components/ListingRail";
+import { TopLocalities } from "@/components/TopLocalities";
 import { FeaturedProjects } from "@/components/demo/FeaturedProjects";
 import { HomeLoanBanner } from "@/components/demo/HomeLoanBanner";
 import { CityInsights } from "@/components/demo/CityInsights";
@@ -19,24 +20,46 @@ export default function HomePage() {
   return (
     <section>
       <div className="hero">
-        <h1>Find a home you can trust in {city}</h1>
-        <p>Verified listings. Responsive owners &amp; agents. No broker spam.</p>
+        <div className="hero-copy">
+          <span className="hero-badge">🛡️ Verified listings · No broker spam</span>
+          <h1>
+            Find your perfect place to call <span className="hero-em">home</span>
+          </h1>
+          <p>
+            Explore verified properties for sale, rent, and investment across {city}&apos;s
+            top localities.
+          </p>
 
-        <form className="searchbar" action="/search" method="get">
-          <LocalitySearch placeholder={`Search locality in ${city} (e.g. Wakad, Baner)`} />
-          <select name="intent" aria-label="Intent" defaultValue="">
-            <option value="">Buy or Rent</option>
-            <option value="sale">Buy</option>
-            <option value="rent">Rent</option>
-          </select>
-          <select name="bhk" aria-label="BHK" defaultValue="">
-            <option value="">Any BHK</option>
-            <option value="1">1 BHK</option>
-            <option value="2">2 BHK</option>
-            <option value="3">3 BHK</option>
-          </select>
-          <button className="btn" type="submit">Search</button>
-        </form>
+          <form className="searchbar" action="/search" method="get">
+            <LocalitySearch placeholder={`Search locality in ${city} (e.g. Wakad, Baner)`} />
+            <select name="intent" aria-label="Intent" defaultValue="">
+              <option value="">Buy or Rent</option>
+              <option value="sale">Buy</option>
+              <option value="rent">Rent</option>
+            </select>
+            <select name="bhk" aria-label="BHK" defaultValue="">
+              <option value="">Any BHK</option>
+              <option value="1">1 BHK</option>
+              <option value="2">2 BHK</option>
+              <option value="3">3 BHK</option>
+            </select>
+            <button className="btn" type="submit">Search</button>
+          </form>
+
+          <div className="hero-popular">
+            <span>Popular:</span>
+            <Link href="/search?intent=sale">Buy</Link>
+            <Link href="/search?intent=rent">Rent</Link>
+            <Link href="/search?bhk=2">2 BHK</Link>
+            <Link href="/search?bhk=3">3 BHK</Link>
+          </div>
+        </div>
+
+        <div className="hero-media">
+          <span className="hero-media-badge">
+            <span className="dot" /> Every listing verified before it goes live
+          </span>
+        </div>
       </div>
 
       <div className="trust-strip">
@@ -59,14 +82,18 @@ export default function HomePage() {
 
       <div className="band">
         <ListingRail
-          title={`Freshly listed in ${city}`}
-          subtitle="The newest verified homes on Rabnix"
+          title="Featured Properties"
+          subtitle={`Handpicked verified homes in ${city}`}
           sort="newest"
-          badge="New"
+          badge="Verified"
         />
       </div>
 
       <div className="band band-tint">
+        <TopLocalities cityName={city} />
+      </div>
+
+      <div className="band">
         <FeaturedProjects cityName={city} />
       </div>
 
