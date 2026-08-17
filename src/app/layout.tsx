@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
+import { DM_Sans } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import { getSessionUser } from "@/lib/auth";
 import { siteUrl } from "@/lib/seo";
 import { LogoutButton } from "./LogoutButton";
+
+// Brand typeface — loaded/self-hosted by next/font; exposed as --font-sans for globals.css.
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans",
+});
 
 const DESCRIPTION =
   "The most trusted place to find a home. Verified listings, responsive listers.";
@@ -30,7 +38,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <html lang="en">
+    <html lang="en" className={dmSans.variable}>
       <body>
         <header className="site-header">
           <Link className="brand" href="/">
