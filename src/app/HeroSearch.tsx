@@ -50,73 +50,85 @@ export function HeroSearch({ city }: { city: string }) {
   const [budgetMin, budgetMax] = budget.split("-");
 
   return (
-    <form className="hero-search" action="/search" method="get">
+    <div className="hero-search-wrapper">
       <div className="hero-tabs" role="tablist">
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            type="button"
-            role="tab"
-            aria-selected={tab === t.key}
-            className={tab === t.key ? "active" : ""}
-            onClick={() => selectTab(t.key)}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Hidden filters driven by the active tab. */}
-      {activeIntent && <input type="hidden" name="intent" value={activeIntent} />}
-      {tab === "projects" && <input type="hidden" name="sort" value="newest" />}
-      {budgetMin && <input type="hidden" name="priceMin" value={budgetMin} />}
-      {budgetMax && <input type="hidden" name="priceMax" value={budgetMax} />}
-
-      <div className="hero-fields">
-        <div className="hero-field hero-field-loc">
-          <span className="hero-field-pin" aria-hidden="true">📍</span>
-          <LocalitySearch placeholder={`Enter location in ${city}`} />
+          {TABS.map((t) => (
+            <button
+              key={t.key}
+              type="button"
+              role="tab"
+              aria-selected={tab === t.key}
+              className={tab === t.key ? "active" : ""}
+              onClick={() => selectTab(t.key)}
+            >
+              {t.label}
+            </button>
+          ))}
         </div>
+      <form className="hero-search" action="/search" method="get">
+        
+        {/* Hidden filters driven by the active tab. */}
+        {activeIntent && (
+          <input type="hidden" name="intent" value={activeIntent} />
+        )}
+        {tab === "projects" && (
+          <input type="hidden" name="sort" value="newest" />
+        )}
+        {budgetMin && <input type="hidden" name="priceMin" value={budgetMin} />}
+        {budgetMax && <input type="hidden" name="priceMax" value={budgetMax} />}
 
-        <label className="hero-field">
-          <span className="hero-field-label">Property Type</span>
-          <select name="type" value={type} onChange={(e) => setType(e.target.value)}>
-            <option value="">All Type</option>
-            {PROPERTY_TYPES.map(([v, label]) => (
-              <option key={v} value={v}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="hero-fields">
+          <div className="hero-field hero-field-loc">
+            <span className="hero-field-pin" aria-hidden="true">
+              📍
+            </span>
+            <LocalitySearch placeholder={`Enter location in ${city}`} />
+          </div>
 
-        <label className="hero-field">
-          <span className="hero-field-label">Budget</span>
-          <select value={budget} onChange={(e) => setBudget(e.target.value)}>
-            {BUDGETS.map(([v, label]) => (
-              <option key={v} value={v}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
+          <label className="hero-field">
+            <span className="hero-field-label">Property Type</span>
+            <select
+              name="type"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+            >
+              <option value="">All Type</option>
+              {PROPERTY_TYPES.map(([v, label]) => (
+                <option key={v} value={v}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
 
-        <label className="hero-field">
-          <span className="hero-field-label">Bedrooms</span>
-          <select name="bhk" defaultValue="">
-            <option value="">Any</option>
-            {[1, 2, 3, 4, 5].map((n) => (
-              <option key={n} value={n}>
-                {n} BHK
-              </option>
-            ))}
-          </select>
-        </label>
+          <label className="hero-field">
+            <span className="hero-field-label">Budget</span>
+            <select value={budget} onChange={(e) => setBudget(e.target.value)}>
+              {BUDGETS.map(([v, label]) => (
+                <option key={v} value={v}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
 
-        <button className="btn hero-search-btn" type="submit">
-          <span aria-hidden="true">🔍</span> Search
-        </button>
-      </div>
-    </form>
+          <label className="hero-field">
+            <span className="hero-field-label">Bedrooms</span>
+            <select name="bhk" defaultValue="">
+              <option value="">Any</option>
+              {[1, 2, 3, 4, 5].map((n) => (
+                <option key={n} value={n}>
+                  {n} BHK
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <button className="btn hero-search-btn" type="submit">
+            <span aria-hidden="true">🔍</span> Search
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }

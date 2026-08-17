@@ -32,6 +32,16 @@ export default function HomePage() {
           </p>
 
           <HeroSearch city={city} />
+
+          <div className="hero-popular">
+            <span>Popular searches:</span>
+            <Link href="/search?intent=sale">Buy</Link>
+            <Link href="/search?intent=rent">Rent</Link>
+            <Link href="/search?type=apartment">Apartments</Link>
+            <Link href="/search?type=villa">Villas</Link>
+            <Link href="/search?bhk=2">2 BHK</Link>
+            <Link href="/search?bhk=3">3 BHK</Link>
+          </div>
         </div>
       </div>
 
