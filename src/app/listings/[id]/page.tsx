@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
@@ -10,14 +9,9 @@ import { formatPriceShort } from "@/modules/search/format";
 import { ContactButton } from "./ContactButton";
 import { FavoriteButton } from "./FavoriteButton";
 import { ReportButton } from "./ReportButton";
+import { ListingMapLazy } from "./ListingMapLazy";
 
 const CURRENCY = process.env.NEXT_PUBLIC_DEFAULT_CURRENCY ?? "INR";
-
-// Leaflet touches `window`, so the mini-map is client-only and lazy-loaded (no SSR).
-const ListingMap = dynamic(() => import("./ListingMap"), {
-  ssr: false,
-  loading: () => <div className="listing-map-inner listing-map-loading">Loading map…</div>,
-});
 
 function humanize(value: string): string {
   return value.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
@@ -164,7 +158,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
       <section className="detail-section">
         <h2>Location</h2>
         <div className="listing-map">
-          <ListingMap
+          <ListingMapLazy
             lat={listing.lat}
             lng={listing.lng}
             label={formatPriceShort(price)}
