@@ -145,7 +145,10 @@ export function PostListingForm({ localities }: { localities: Locality[] }) {
           Area (sqft)
           <input name="areaSqft" type="number" min="1" placeholder="950" />
         </label>
-        <label>
+        
+      </div>
+      <div className="row">
+          <label>
           Furnishing
           <select name="furnishing" defaultValue="semi_furnished">
             <option value="unfurnished">Unfurnished</option>
@@ -154,7 +157,6 @@ export function PostListingForm({ localities }: { localities: Locality[] }) {
           </select>
         </label>
       </div>
-
       <label>
         Description
         <textarea name="description" rows={4} placeholder="Key details buyers care about…" />
