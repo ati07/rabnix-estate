@@ -261,6 +261,7 @@ export default function HomeView({
       
       {/* 1. TOP NAVBAR */}
       <Navbar
+        isAuthenticated={isAuthenticated}
         selectedCity={selectedCity}
         onOpenCitySelector={() => setIsCitySelectorOpen(true)}
         onSelectListingType={(type) => setFilters((prev) => ({ ...prev, listingType: type }))}

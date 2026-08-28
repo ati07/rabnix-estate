@@ -26,6 +26,7 @@ import { CityInfo, ListingType } from '@/lib/types';
 import { CITIES_DATA } from '@/lib/realEstateData';
 
 interface NavbarProps {
+  isAuthenticated: boolean;
   selectedCity: CityInfo;
   onOpenCitySelector: () => void;
   onSelectListingType: (type: ListingType) => void;
@@ -39,6 +40,7 @@ interface NavbarProps {
 }
 
 export function Navbar({
+  isAuthenticated,
   selectedCity,
   onOpenCitySelector,
   onSelectListingType,
@@ -194,15 +196,6 @@ export function Navbar({
             </button>
 
             <button
-              id="nav-link-homeloan"
-              onClick={onOpenEmiCalculator}
-              className="hidden 2xl:flex items-center gap-1.5 px-2.5 xl:px-3 py-1.5 rounded-lg whitespace-nowrap hover:text-[#18A67D] hover:bg-[#F8FAFC] transition-colors cursor-pointer"
-            >
-              <BadgePercent className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-              <span>Home Loans</span>
-            </button>
-
-            <button
               id="nav-link-valuation"
               onClick={onOpenAiValuation}
               className="hidden 2xl:flex items-center gap-1.5 px-2.5 xl:px-3 py-1.5 rounded-lg whitespace-nowrap hover:text-[#18A67D] hover:bg-[#F8FAFC] transition-colors cursor-pointer"
@@ -245,7 +238,7 @@ export function Navbar({
                     className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-[#172033] hover:bg-[#F8FAFC] hover:text-[#18A67D] rounded-lg transition-colors cursor-pointer"
                   >
                     <BadgePercent className="w-4 h-4 text-amber-500" />
-                    <span>EMI & Home Loans</span>
+                    <span>EMI Calculator</span>
                   </button>
                   <button
                     onClick={() => {
@@ -279,6 +272,29 @@ export function Navbar({
                 </span>
               )}
             </button>
+
+            {/* Sign In / Account — links into the (site) auth pages (full load across route groups) */}
+            {isAuthenticated ? (
+              <a
+                id="nav-account-btn"
+                href="/dashboard"
+                className="hidden sm:flex items-center gap-1.5 border border-[#E2E8F0] text-[#172033] hover:text-[#18A67D] hover:border-[#CBD5E1] hover:bg-[#F8FAFC] px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all shadow-xs cursor-pointer shrink-0 whitespace-nowrap"
+                title="My account"
+              >
+                <User className="w-4 h-4 shrink-0" />
+                <span>Account</span>
+              </a>
+            ) : (
+              <a
+                id="nav-signin-btn"
+                href="/login"
+                className="hidden sm:flex items-center gap-1.5 border border-[#E2E8F0] text-[#172033] hover:text-[#18A67D] hover:border-[#CBD5E1] hover:bg-[#F8FAFC] px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all shadow-xs cursor-pointer shrink-0 whitespace-nowrap"
+                title="Sign in to your account"
+              >
+                <User className="w-4 h-4 shrink-0" />
+                <span>Sign In</span>
+              </a>
+            )}
 
             {/* Post Property FREE Button */}
             <button
@@ -382,6 +398,13 @@ export function Navbar({
               <span>Ask Rabnix Genie AI Assistant</span>
               <Sparkles className="w-4 h-4 text-[#22C39A]" />
             </button>
+            <a
+              href={isAuthenticated ? '/dashboard' : '/login'}
+              className="w-full flex items-center justify-between p-2.5 bg-[#F8FAFC] text-[#172033] rounded-lg font-bold text-xs uppercase tracking-wider border border-[#E2E8F0]"
+            >
+              <span>{isAuthenticated ? 'My Account' : 'Sign In'}</span>
+              <User className="w-4 h-4 text-[#18A67D]" />
+            </a>
           </div>
         </div>
       )}
