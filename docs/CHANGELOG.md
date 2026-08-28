@@ -6,9 +6,9 @@ its header — see [docs/README.md](./README.md) for the convention.
 
 ## [Unreleased]
 - _Pending: target city, team size, and seeding channel decisions (PRD §7)._
-- `frontend-port-v1.md` **1.3.0** — spec to port the `rabnix-estate-v1` Tailwind design onto the
+- `frontend-port-v1.md` **1.4.0** — spec to port the `rabnix-estate-v1` Tailwind design onto the
   real Prisma/Postgres backend (adapter-centered, 6 phases: tooling → adapter → core UI → post →
-  favorites → AI/Gemini). Approved; §8 decisions signed off. Phases 0–3 marked done.
+  favorites → AI/Gemini). Approved; §8 decisions signed off. Phases 0–4 marked done.
 - Frontend port **Phase 0** (tooling): added Tailwind v4 + PostCSS (theme + utilities, preflight
   excluded so it coexists with the legacy plain-CSS design system) plus `lucide-react`, `motion`,
   `clsx`, `tailwind-merge`, `class-variance-authority`, `@hookform/resolvers`. `@theme` brand tokens
@@ -35,6 +35,12 @@ its header — see [docs/README.md](./README.md) for the convention.
   `live` in non-production (dev convenience, like `/api/dev/login`); `pending` in production. Verified
   end-to-end on local DB: unauth → 401; register → create → submit → `live` → appears on `/v2` + search.
   Known gap: the modal's external photo URL isn't persisted yet (media route ingests uploaded files).
+- Frontend port **Phase 4** (shortlist / favorites): `HomeView.handleToggleShortlist` now persists to
+  the real backend — optimistic toggle + `POST`/`DELETE /api/listings/[id]/favorite` with rollback,
+  logged-out visitors routed to `/login?redirect=/v2`. `src/app/v2/page.tsx` reads the session and
+  hydrates `initialShortlistedIds` from the buyer's `Favorite` rows (+ `isAuthenticated`), so hearts
+  and the shortlist drawer survive reload. Verified on local DB: unauth → 401; idempotent save/unsave;
+  SSR `/v2` shows 0 filled hearts before and 1 after saving. Suite 85 green.
 - Week 1 build (branch `feat/week1-auth-search`): JWT session cookie + `/api/me`, search results
   page, sample-listings seed. Local dev runs on plain Postgres (local or managed); Docker removed.
   See `build-plan-phase1.md` Week 1.

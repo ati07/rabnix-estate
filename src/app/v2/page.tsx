@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
+import { getSessionUser } from "@/lib/auth";
 import { listingToProperty } from "@/lib/property-adapter";
 import type { Property } from "@/lib/types";
 import HomeView from "./HomeView";
@@ -33,7 +34,31 @@ async function fetchInitialProperties(): Promise<Property[]> {
   }
 }
 
+// The signed-in buyer's saved listing ids, so the v1 heart toggles + shortlist drawer hydrate
+// with real per-user favorites (Phase 4). Empty for logged-out visitors.
+async function fetchFavoriteIds(userId: string): Promise<string[]> {
+  try {
+    const favorites = await prisma.favorite.findMany({
+      where: { userId },
+      select: { listingId: true },
+    });
+    return favorites.map((f) => f.listingId);
+  } catch {
+    return [];
+  }
+}
+
 export default async function V2HomePage() {
-  const initialProperties = await fetchInitialProperties();
-  return <HomeView initialProperties={initialProperties} />;
+  const user = await getSessionUser();
+  const [initialProperties, initialShortlistedIds] = await Promise.all([
+    fetchInitialProperties(),
+    user ? fetchFavoriteIds(user.id) : Promise.resolve<string[]>([]),
+  ]);
+  return (
+    <HomeView
+      initialProperties={initialProperties}
+      initialShortlistedIds={initialShortlistedIds}
+      isAuthenticated={!!user}
+    />
+  );
 }

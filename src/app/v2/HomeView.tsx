@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   Building2, 
   Filter, 
@@ -48,7 +49,17 @@ function pickInitialCity(properties: Property[]): CityInfo {
 
 // Real listings are fetched server-side (src/app/v2/page.tsx) and passed in as the initial set,
 // through the Prisma→Property adapter. The client keeps v1's instant filter/sort UX over them.
-export default function HomeView({ initialProperties }: { initialProperties: Property[] }) {
+export default function HomeView({
+  initialProperties,
+  initialShortlistedIds = [],
+  isAuthenticated = false,
+}: {
+  initialProperties: Property[];
+  initialShortlistedIds?: string[];
+  isAuthenticated?: boolean;
+}) {
+  const router = useRouter();
+
   // Master Property List (seeded from the DB; new posts are prepended client-side)
   const [properties, setProperties] = useState<Property[]>(initialProperties);
 
@@ -72,8 +83,9 @@ export default function HomeView({ initialProperties }: { initialProperties: Pro
     sortBy: 'recommended'
   }));
 
-  // Shortlisted IDs — real per-user favorites are wired in Phase 4; start empty for now.
-  const [shortlistedIds, setShortlistedIds] = useState<string[]>([]);
+  // Shortlisted IDs — hydrated from the signed-in buyer's real Favorite rows (src/app/v2/page.tsx);
+  // toggles persist via /api/listings/[id]/favorite. Empty for logged-out visitors.
+  const [shortlistedIds, setShortlistedIds] = useState<string[]>(() => initialShortlistedIds);
 
   // Modal & Drawer visibility
   const [isCitySelectorOpen, setIsCitySelectorOpen] = useState(false);
@@ -96,10 +108,28 @@ export default function HomeView({ initialProperties }: { initialProperties: Pro
     }));
   };
 
-  const handleToggleShortlist = (propertyId: string) => {
-    setShortlistedIds((prev) => 
-      prev.includes(propertyId) ? prev.filter((id) => id !== propertyId) : [...prev, propertyId]
+  // Persist favorites to the real backend. Logged-out visitors are routed to sign in; signed-in
+  // toggles update optimistically and roll back if the request fails.
+  const handleToggleShortlist = async (propertyId: string) => {
+    if (!isAuthenticated) {
+      router.push('/login?redirect=/v2');
+      return;
+    }
+    const wasSaved = shortlistedIds.includes(propertyId);
+    setShortlistedIds((prev) =>
+      wasSaved ? prev.filter((id) => id !== propertyId) : [...prev, propertyId]
     );
+    try {
+      const res = await fetch(`/api/listings/${propertyId}/favorite`, {
+        method: wasSaved ? 'DELETE' : 'POST',
+      });
+      if (!res.ok) throw new Error('favorite request failed');
+    } catch {
+      // Roll back the optimistic change on failure.
+      setShortlistedIds((prev) =>
+        wasSaved ? [...prev, propertyId] : prev.filter((id) => id !== propertyId)
+      );
+    }
   };
 
   const handlePropertyAdded = (newProperty: Property) => {

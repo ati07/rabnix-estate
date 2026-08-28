@@ -1,6 +1,6 @@
 # Frontend Port — v1 Design → rabnix-estate
 
-> **Version:** 1.3.0 · **Status:** Approved · **Last updated:** 2026-08-28 · **Owner:** Engineering
+> **Version:** 1.4.0 · **Status:** Approved · **Last updated:** 2026-08-28 · **Owner:** Engineering
 
 Adopt the `rabnix-estate-v1` design (a Tailwind-based, modal-driven UI shell) as the production
 frontend of `rabnix-estate`, wiring every screen to the **real** Prisma/Postgres backend and API
@@ -170,11 +170,18 @@ Each phase is independently demoable and closes with the standard ship loop.
   ingests uploaded files (EXIF-strip → WebP → pHash), not remote URLs — so modal-posted listings use
   the fallback image until a file-upload step (or URL-ingest) is added.
 
-### Phase 4 — Shortlist / favorites
+### Phase 4 — Shortlist / favorites — ✅ Done (2026-08-28)
 - Wire `ShortlistDrawer` + card heart toggles to `/api/listings/[id]/favorite` (`Favorite` model),
   replacing v1's local `shortlistedIds` state with real per-user favorites; hydrate initial set for
   signed-in users.
 - **DoD:** favorite/unfavorite persists across reload for a logged-in user; verified via Prisma.
+- **Delivered:** `HomeView.handleToggleShortlist` is now async — optimistic toggle + `POST`/`DELETE`
+  `/api/listings/[id]/favorite` with rollback on failure; logged-out visitors are routed to
+  `/login?redirect=/v2`. `src/app/v2/page.tsx` reads the session (`getSessionUser`) and hydrates
+  `initialShortlistedIds` from the buyer's `Favorite` rows, passing `isAuthenticated` down; state seeds
+  from that set so hearts/shortlist survive reload. The `favorite` route already existed (idempotent
+  save/unsave, auth-gated). Verified end-to-end on local DB: unauth → 401; save/unsave idempotent;
+  SSR `/v2` renders 0 filled hearts before and exactly 1 after saving (real hydration). Suite 85 green.
 
 ### Phase 5 — AI features (Gemini)
 - Port `/api/gemini/advisor` route + `@google/genai`; add `GEMINI_API_KEY` to `.env` /`.env.example`
