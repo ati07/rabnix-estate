@@ -1,4 +1,39 @@
 /* ─────────────────────────────────────────────────────────────────────────
+   Tailwind v4 — theme + utilities ONLY (preflight/reset deliberately excluded).
+   During the v1 frontend port (docs/frontend-port-v1.md), Tailwind coexists with
+   the legacy plain-CSS design system below. Skipping preflight keeps the reset
+   from clobbering existing pages; ported v1 components still get all utilities.
+   Utilities land in the `utilities` layer, so they never override the unlayered
+   legacy rules — migrate page-by-page, then enable full preflight when done.
+   ───────────────────────────────────────────────────────────────────────── */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+/* Expose the shared brand tokens to Tailwind (bg-primary, text-brand-navy, …).
+   Values mirror the :root design tokens below and v1's @theme block. */
+@theme {
+  --color-brand-navy: #0F2A43;
+  --color-brand-navy-2: #163b5c;
+  --color-primary: #18A67D;
+  --color-primary-dark: #0E7C5D;
+  --color-primary-2: #22C39A;
+  --color-primary-tint: #E7F6F1;
+  --color-bg-canvas: #F8FAFC;
+  --color-band-tint: #F1F5F9;
+  --color-panel: #FFFFFF;
+  --color-panel-2: #F1F5F9;
+  --color-input-bg: #FFFFFF;
+  --color-brand-text: #172033;
+  --color-brand-muted: #64748B;
+  --color-brand-border: #E2E8F0;
+  --color-brand-border-strong: #CBD5E1;
+  --color-brand-success: #0E7C5D;
+  --color-brand-warning: #b7791f;
+  --color-brand-danger: #d92d20;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
    Rabnix Estate — design system
    Light, portal-style theme (à la MagicBricks/99acres) with a #3baf2a green
    "trust" brand. Almost the entire app is themed through these tokens + the

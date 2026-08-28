@@ -6,6 +6,19 @@ its header — see [docs/README.md](./README.md) for the convention.
 
 ## [Unreleased]
 - _Pending: target city, team size, and seeding channel decisions (PRD §7)._
+- `frontend-port-v1.md` **1.1.0** — spec to port the `rabnix-estate-v1` Tailwind design onto the
+  real Prisma/Postgres backend (adapter-centered, 6 phases: tooling → adapter → core UI → post →
+  favorites → AI/Gemini). Approved; §8 decisions signed off.
+- Frontend port **Phase 0** (tooling): added Tailwind v4 + PostCSS (theme + utilities, preflight
+  excluded so it coexists with the legacy plain-CSS design system) plus `lucide-react`, `motion`,
+  `clsx`, `tailwind-merge`, `class-variance-authority`, `@hookform/resolvers`. `@theme` brand tokens
+  mirror the existing `:root` palette. Build + typecheck green.
+- Frontend port **Phase 1** (adapter): `src/lib/property-adapter.ts` translates Prisma `Listing` ⇄ v1
+  `Property` (intent+propertyType↔listingType enum split, bhk/areaSqft renames, derived
+  priceFormatted/pricePerSqFt/isVerified, safe defaults). Ported UI helpers (`lib/types.ts`,
+  `lib/formatters.ts`, `lib/utils.ts`). New persisted `Listing` fields `reraId` /
+  `constructionStatus` / `isFeatured` (schema + `prisma db push` + `data-model.sql`). 13 adapter unit
+  tests; full suite 85 green.
 - Week 1 build (branch `feat/week1-auth-search`): JWT session cookie + `/api/me`, search results
   page, sample-listings seed. Local dev runs on plain Postgres (local or managed); Docker removed.
   See `build-plan-phase1.md` Week 1.
