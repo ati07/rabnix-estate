@@ -6,9 +6,9 @@ its header — see [docs/README.md](./README.md) for the convention.
 
 ## [Unreleased]
 - _Pending: target city, team size, and seeding channel decisions (PRD §7)._
-- `frontend-port-v1.md` **1.1.0** — spec to port the `rabnix-estate-v1` Tailwind design onto the
+- `frontend-port-v1.md` **1.2.0** — spec to port the `rabnix-estate-v1` Tailwind design onto the
   real Prisma/Postgres backend (adapter-centered, 6 phases: tooling → adapter → core UI → post →
-  favorites → AI/Gemini). Approved; §8 decisions signed off.
+  favorites → AI/Gemini). Approved; §8 decisions signed off. Phases 0–2 marked done.
 - Frontend port **Phase 0** (tooling): added Tailwind v4 + PostCSS (theme + utilities, preflight
   excluded so it coexists with the legacy plain-CSS design system) plus `lucide-react`, `motion`,
   `clsx`, `tailwind-merge`, `class-variance-authority`, `@hookform/resolvers`. `@theme` brand tokens
@@ -19,6 +19,13 @@ its header — see [docs/README.md](./README.md) for the convention.
   `lib/formatters.ts`, `lib/utils.ts`). New persisted `Listing` fields `reraId` /
   `constructionStatus` / `isFeatured` (schema + `prisma db push` + `data-model.sql`). 13 adapter unit
   tests; full suite 85 green.
+- Frontend port **Phase 2** (core listing UI, server-wired): 15 v1 components under
+  `src/components/v2/`; server component `src/app/v2/page.tsx` fetches live listings and maps them
+  through the adapter into the client shell `src/app/v2/HomeView.tsx` (runs alongside legacy `/`).
+  `pickInitialCity()` derives the default city from real inventory (fixes a default-city/inventory
+  mismatch that hid all listings). Static city/locality data ported into a trimmed `realEstateData.ts`
+  (mock `INITIAL_PROPERTIES` dropped). Verified on local Postgres: `/v2` renders 22 live Pune listings
+  with the v1 look; legacy `/` + `/search` still 200; typecheck + build green.
 - Week 1 build (branch `feat/week1-auth-search`): JWT session cookie + `/api/me`, search results
   page, sample-listings seed. Local dev runs on plain Postgres (local or managed); Docker removed.
   See `build-plan-phase1.md` Week 1.

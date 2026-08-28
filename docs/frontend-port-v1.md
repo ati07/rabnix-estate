@@ -1,6 +1,6 @@
 # Frontend Port — v1 Design → rabnix-estate
 
-> **Version:** 1.1.0 · **Status:** Approved · **Last updated:** 2026-08-28 · **Owner:** Engineering
+> **Version:** 1.2.0 · **Status:** Approved · **Last updated:** 2026-08-28 · **Owner:** Engineering
 
 Adopt the `rabnix-estate-v1` design (a Tailwind-based, modal-driven UI shell) as the production
 frontend of `rabnix-estate`, wiring every screen to the **real** Prisma/Postgres backend and API
@@ -134,13 +134,22 @@ Each phase is independently demoable and closes with the standard ship loop.
 - Unit tests (vitest, matching existing test style) for both mapping directions incl. enum edge cases.
 - **DoD:** adapter round-trips sample listings; tests green; typecheck green.
 
-### Phase 2 — Core listing UI (server-wired)
+### Phase 2 — Core listing UI (server-wired) — ✅ Done (2026-08-28)
 - Port core components; replace `INITIAL_PROPERTIES` with real data from `/api/listings/search`
   through the adapter (D5: server-seeded, client-filtered).
 - Decide integration point: new home `page.tsx` using v1's layout, or progressive replacement of the
   current landing/search. Keep `/search`, `/listings/[id]` server routes functioning.
 - **DoD:** home + detail render real listings with the v1 look; filters/sort work; smoke-tested on
   local Postgres.
+- **Delivered:** 15 v1 components under `src/components/v2/`; client shell `src/app/v2/HomeView.tsx`;
+  **server component** `src/app/v2/page.tsx` fetches live listings (`status=live`, unexpired, ordered
+  featured→quality→recent, take 24) via Prisma `include` and maps through `listingToProperty`, then
+  hands them to `HomeView` (D2: runs alongside legacy `/`). `pickInitialCity()` derives the default
+  city from real inventory so the client filter doesn't hide everything (fixed a Bangalore-default
+  vs Pune-inventory mismatch). Static city/locality figures ported into a trimmed `realEstateData.ts`
+  (mock `INITIAL_PROPERTIES` intentionally dropped). Verified on local Postgres: `/v2` → 200 renders
+  22 live Pune listings (Baner/Kharadi/Hinjewadi/Wakad, BHK/Apartment content, no empty state);
+  legacy `/` and `/search` still 200. Typecheck + prod build green (`/v2` ≈ 32.9 kB).
 
 ### Phase 3 — Post-property flow
 - Wire `PostPropertyModal` to `POST /api/listings` + `/api/listings/[id]/submit` with auth gating
