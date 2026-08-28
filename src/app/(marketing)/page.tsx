@@ -1,19 +1,13 @@
-import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/auth";
 import { listingToProperty } from "@/lib/property-adapter";
 import type { Property } from "@/lib/types";
 import HomeView from "./HomeView";
 
-// v1-design home, running ALONGSIDE the legacy landing at "/" during the frontend port
-// (docs/frontend-port-v1.md §5 Phase 2). Server-fetches real live listings, maps them through
-// the Prisma→Property adapter, and hands them to the client HomeView which keeps v1's instant
-// filter/sort UX. Cut over "/" to this once the port is verified.
-export const metadata: Metadata = {
-  title: "Rabnix Estate — Verified homes, zero brokerage (preview)",
-  description:
-    "Preview of the new Rabnix Estate experience: verified listings, AI valuation, and locality trends.",
-};
+// Production home ("/") — the rabnix-estate-v1 design, server-wired to the real backend. Fetches
+// live listings, maps them through the Prisma→Property adapter, and hands them to the client
+// HomeView which keeps v1's instant filter/sort UX. Runs under the isolated (marketing) root layout
+// (full Tailwind + preflight, system font) so it renders pixel-identical to rabnix-estate-v1.
 
 async function fetchInitialProperties(): Promise<Property[]> {
   try {
@@ -35,7 +29,7 @@ async function fetchInitialProperties(): Promise<Property[]> {
 }
 
 // The signed-in buyer's saved listing ids, so the v1 heart toggles + shortlist drawer hydrate
-// with real per-user favorites (Phase 4). Empty for logged-out visitors.
+// with real per-user favorites. Empty for logged-out visitors.
 async function fetchFavoriteIds(userId: string): Promise<string[]> {
   try {
     const favorites = await prisma.favorite.findMany({
@@ -48,7 +42,7 @@ async function fetchFavoriteIds(userId: string): Promise<string[]> {
   }
 }
 
-export default async function V2HomePage() {
+export default async function HomePage() {
   const user = await getSessionUser();
   const [initialProperties, initialShortlistedIds] = await Promise.all([
     fetchInitialProperties(),

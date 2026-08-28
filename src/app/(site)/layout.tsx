@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import Link from "next/link";
-import "./globals.css";
+import "../globals.css";
 import { getSessionUser } from "@/lib/auth";
 import { siteUrl } from "@/lib/seo";
-import { LogoutButton } from "./LogoutButton";
+import { LogoutButton } from "../LogoutButton";
 
+// Root layout for the legacy backend-wired pages (search, post, login, dashboard, admin, listings).
+// Keeps the original chrome (mega-menu header + width-capped container + footer) and the legacy
+// no-preflight stylesheet (../globals.css). Isolated from the (marketing) root layout so the v1
+// design's Tailwind preflight never resets these pages, and vice-versa.
 const dmSans = DM_Sans({
   subsets: ["latin"],
   display: "swap",
@@ -22,20 +26,9 @@ export const metadata: Metadata = {
     template: "%s · Rabnix Estate",
   },
   description: DESCRIPTION,
-  openGraph: {
-    type: "website",
-    siteName: "Rabnix Estate",
-    title: "Rabnix Estate — Trusted homes",
-    description: DESCRIPTION,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Rabnix Estate",
-    description: DESCRIPTION,
-  },
 };
 
-export default async function RootLayout({
+export default async function SiteLayout({
   children,
 }: {
   children: React.ReactNode;

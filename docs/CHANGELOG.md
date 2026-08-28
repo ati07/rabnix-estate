@@ -6,9 +6,18 @@ its header — see [docs/README.md](./README.md) for the convention.
 
 ## [Unreleased]
 - _Pending: target city, team size, and seeding channel decisions (PRD §7)._
-- `frontend-port-v1.md` **1.5.0** — spec to port the `rabnix-estate-v1` Tailwind design onto the
+- `frontend-port-v1.md` **1.6.0** — spec to port the `rabnix-estate-v1` Tailwind design onto the
   real Prisma/Postgres backend (adapter-centered, 6 phases: tooling → adapter → core UI → post →
-  favorites → AI/Gemini). Approved; §8 decisions signed off. Phases 0–5 marked done (port complete).
+  favorites → AI/Gemini). Approved; §8 decisions signed off. Phases 0–5 done + cutover complete.
+- Frontend port **Cutover** (v1 → root): promoted the v1 home from `/v2` to the production root `/`.
+  Split the app into two isolated App Router root layouts via route groups — `(marketing)/` (v1
+  design: own `<html>/<body>`, `@import "tailwindcss"` with full preflight, `@theme` brand tokens,
+  system-sans, no legacy chrome; server `page.tsx` fetches live listings/favorites → `HomeView`) and
+  `(site)/` (all legacy pages — search/post/login/dashboard/admin/listings + old landing at `/legacy`
+  — keeping the mega-menu header/footer chrome and the no-preflight `globals.css` + DM Sans). Removed
+  the top-level `app/layout.tsx` so each group owns its root; `/v2` → 307 → `/`. Fixes the `/v2`
+  visual mismatch (doubled navbar, width cap, missing preflight, wrong font). Typecheck + build green;
+  suite 85.
 - Frontend port **Phase 0** (tooling): added Tailwind v4 + PostCSS (theme + utilities, preflight
   excluded so it coexists with the legacy plain-CSS design system) plus `lucide-react`, `motion`,
   `clsx`, `tailwind-merge`, `class-variance-authority`, `@hookform/resolvers`. `@theme` brand tokens

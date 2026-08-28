@@ -625,7 +625,7 @@ export function PostPropertyModal({
                     <p>{error}</p>
                     {needLogin && (
                       <Link
-                        href="/login?redirect=/v2&mode=register"
+                        href="/login?redirect=/&mode=register"
                         className="inline-flex items-center gap-1 text-[#0E7C5D] underline"
                       >
                         Sign in to continue

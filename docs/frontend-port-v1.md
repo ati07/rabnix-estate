@@ -1,6 +1,6 @@
 # Frontend Port — v1 Design → rabnix-estate
 
-> **Version:** 1.5.0 · **Status:** Approved · **Last updated:** 2026-08-28 · **Owner:** Engineering
+> **Version:** 1.6.0 · **Status:** Approved · **Last updated:** 2026-08-28 · **Owner:** Engineering
 
 Adopt the `rabnix-estate-v1` design (a Tailwind-based, modal-driven UI shell) as the production
 frontend of `rabnix-estate`, wiring every screen to the **real** Prisma/Postgres backend and API
@@ -201,6 +201,26 @@ Each phase is independently demoable and closes with the standard ship loop.
   reaches `generativelanguage.googleapis.com`, upstream auth error degrades to a graceful 500. Suite
   85 green.
 
+### Cutover — v1 design promoted to site root `/` — ✅ Done (2026-08-28)
+Resolves D2 (§8.2): the v1 home ran at `/v2` alongside the legacy landing during the port; it is now
+the production homepage. Instead of merging the two designs under one shell (which double-wrapped the
+v1 page in legacy chrome, width-capped it in `.container`, dropped Tailwind preflight, and forced DM
+Sans), the app uses **two isolated root layouts via App Router route groups**:
+- **`src/app/(marketing)/`** — the v1 design. Own `layout.tsx` renders its own `<html>/<body>` and
+  imports `marketing.css` (`@import "tailwindcss"`, i.e. **full preflight** + `@theme` brand tokens,
+  a verbatim copy of v1's `globals.css`); **system-sans** font, no legacy header/footer. `page.tsx`
+  is the server component that fetches live listings/favorites → `HomeView`. This is now `/`.
+- **`src/app/(site)/`** — every legacy page (`search`, `post`, `login`, `dashboard`, `admin`,
+  `listings`, plus the old landing at `/legacy`). Own `layout.tsx` keeps the `.site-header` mega-menu
+  chrome, `.container` main, footer, and the legacy no-preflight `globals.css` + DM Sans.
+- The top-level `app/layout.tsx` was **removed** so each group owns its root; crossing between groups
+  is a full document load (acceptable — they are visually distinct shells).
+- `/v2` → `307` redirect to `/` (`next.config.mjs`), preserving the old preview URL.
+- **Verified** on local dev: `/` = marketing CSS with preflight and no `.site-header`/`.mega-menu`,
+  v1 markers present (floating genie, reset-filters); `(site)` pages retain chrome + their own CSS
+  bundle; `/`, `/login`, `/search`, `/post`, `/dashboard`, `/legacy` all 200; `next build` 30/30
+  static pages; typecheck clean; suite 85 green.
+
 ## 6. Risks & mitigations
 - **Model-field gaps (§3.4)** → adapter defaults + explicit persist/hide decision in Phase 1; never
   block the UI on a missing field.
@@ -234,6 +254,10 @@ Tailwind utilities while the existing design-system pages are untouched. Full pr
 enabled once legacy pages are fully migrated. Reversible, low blast radius.
 
 ## Changelog
+- **1.6.0** (2026-08-28) — Cutover: v1 design promoted from `/v2` to the site root `/` via two
+  isolated App Router root layouts — `(marketing)` (v1, full preflight, system sans, no chrome) and
+  `(site)` (all legacy pages, keep chrome + no-preflight CSS). Removed top-level `app/layout.tsx`;
+  `/v2` → 307 → `/`; legacy landing moved to `/legacy`. Resolves D2.
 - **1.1.0** (2026-08-28) — Approved; resolved §8 (persist `reraId`/`constructionStatus`/`isFeatured`;
   v1 home alongside legacy; Gemini disabled-by-default). Added Phase 0 no-preflight Tailwind note.
 - **1.0.0** (2026-08-28) — Initial frontend-port spec (v1 design → rabnix-estate, all feature areas).

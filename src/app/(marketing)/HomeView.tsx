@@ -47,8 +47,8 @@ function pickInitialCity(properties: Property[]): CityInfo {
   return CITIES_DATA.find((c) => c.name === top) ?? CITIES_DATA[1];
 }
 
-// Real listings are fetched server-side (src/app/v2/page.tsx) and passed in as the initial set,
-// through the Prisma→Property adapter. The client keeps v1's instant filter/sort UX over them.
+// Real listings are fetched server-side (src/app/(marketing)/page.tsx) and passed in as the initial
+// set, through the Prisma→Property adapter. The client keeps v1's instant filter/sort UX over them.
 export default function HomeView({
   initialProperties,
   initialShortlistedIds = [],
@@ -83,7 +83,7 @@ export default function HomeView({
     sortBy: 'recommended'
   }));
 
-  // Shortlisted IDs — hydrated from the signed-in buyer's real Favorite rows (src/app/v2/page.tsx);
+  // Shortlisted IDs — hydrated from the signed-in buyer's real Favorite rows (marketing page.tsx);
   // toggles persist via /api/listings/[id]/favorite. Empty for logged-out visitors.
   const [shortlistedIds, setShortlistedIds] = useState<string[]>(() => initialShortlistedIds);
 
@@ -112,7 +112,7 @@ export default function HomeView({
   // toggles update optimistically and roll back if the request fails.
   const handleToggleShortlist = async (propertyId: string) => {
     if (!isAuthenticated) {
-      router.push('/login?redirect=/v2');
+      router.push('/login?redirect=/');
       return;
     }
     const wasSaved = shortlistedIds.includes(propertyId);
