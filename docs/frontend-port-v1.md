@@ -1,6 +1,6 @@
 # Frontend Port — v1 Design → rabnix-estate
 
-> **Version:** 1.4.0 · **Status:** Approved · **Last updated:** 2026-08-28 · **Owner:** Engineering
+> **Version:** 1.5.0 · **Status:** Approved · **Last updated:** 2026-08-28 · **Owner:** Engineering
 
 Adopt the `rabnix-estate-v1` design (a Tailwind-based, modal-driven UI shell) as the production
 frontend of `rabnix-estate`, wiring every screen to the **real** Prisma/Postgres backend and API
@@ -183,13 +183,23 @@ Each phase is independently demoable and closes with the standard ship loop.
   save/unsave, auth-gated). Verified end-to-end on local DB: unauth → 401; save/unsave idempotent;
   SSR `/v2` renders 0 filled hearts before and exactly 1 after saving (real hydration). Suite 85 green.
 
-### Phase 5 — AI features (Gemini)
+### Phase 5 — AI features (Gemini) — ✅ Done (2026-08-28)
 - Port `/api/gemini/advisor` route + `@google/genai`; add `GEMINI_API_KEY` to `.env` /`.env.example`
   (gitignored real key, per conventions). Wire `AiGenieChatDrawer`, `AiValuationModal`,
   `EmiCalculatorModal`.
 - **Open item:** the route references model `gemini-3.7-flash`; confirm/adjust to a valid current
   model ID before shipping. Feature must degrade gracefully when the key is absent (disabled state).
 - **DoD:** valuation returns structured JSON; Genie chat replies; graceful disable without a key.
+- **Delivered:** `src/app/api/gemini/advisor/route.ts` ported with an **env gate** — no
+  `GEMINI_API_KEY` → clean `{ success:false }` **503** and no upstream call (UI modals degrade
+  gracefully). Two actions: `valuation` (structured JSON via `responseSchema` /
+  `responseMimeType:"application/json"`) and `chat` ("Rabnix Genie" system instruction). Model is
+  env-overridable (`GEMINI_MODEL`), defaulting to a valid **`gemini-2.5-flash`** (v1's
+  `gemini-3.7-flash` placeholder was not a real model id). Added `@google/genai` dep and documented
+  `GEMINI_API_KEY` / `GEMINI_MODEL` in `.env.example`. Verified both paths on local dev: **disabled**
+  (no key) → 503 for both actions; **enabled** (dummy key) → gate flips, client instantiates and
+  reaches `generativelanguage.googleapis.com`, upstream auth error degrades to a graceful 500. Suite
+  85 green.
 
 ## 6. Risks & mitigations
 - **Model-field gaps (§3.4)** → adapter defaults + explicit persist/hide decision in Phase 1; never

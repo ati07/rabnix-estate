@@ -6,9 +6,9 @@ its header — see [docs/README.md](./README.md) for the convention.
 
 ## [Unreleased]
 - _Pending: target city, team size, and seeding channel decisions (PRD §7)._
-- `frontend-port-v1.md` **1.4.0** — spec to port the `rabnix-estate-v1` Tailwind design onto the
+- `frontend-port-v1.md` **1.5.0** — spec to port the `rabnix-estate-v1` Tailwind design onto the
   real Prisma/Postgres backend (adapter-centered, 6 phases: tooling → adapter → core UI → post →
-  favorites → AI/Gemini). Approved; §8 decisions signed off. Phases 0–4 marked done.
+  favorites → AI/Gemini). Approved; §8 decisions signed off. Phases 0–5 marked done (port complete).
 - Frontend port **Phase 0** (tooling): added Tailwind v4 + PostCSS (theme + utilities, preflight
   excluded so it coexists with the legacy plain-CSS design system) plus `lucide-react`, `motion`,
   `clsx`, `tailwind-merge`, `class-variance-authority`, `@hookform/resolvers`. `@theme` brand tokens
@@ -41,6 +41,15 @@ its header — see [docs/README.md](./README.md) for the convention.
   hydrates `initialShortlistedIds` from the buyer's `Favorite` rows (+ `isAuthenticated`), so hearts
   and the shortlist drawer survive reload. Verified on local DB: unauth → 401; idempotent save/unsave;
   SSR `/v2` shows 0 filled hearts before and 1 after saving. Suite 85 green.
+- Frontend port **Phase 5** (AI/Gemini — final): ported `src/app/api/gemini/advisor/route.ts` +
+  `@google/genai`, **disabled by default** — with no `GEMINI_API_KEY` the route returns a clean
+  `{ success:false }` **503** and makes no upstream call, so `AiValuationModal` / `AiGenieChatDrawer`
+  degrade gracefully. Two actions: `valuation` (structured JSON via `responseSchema`) and `chat`
+  ("Rabnix Genie"). Model is env-overridable (`GEMINI_MODEL`), defaulting to the valid
+  `gemini-2.5-flash` (v1's `gemini-3.7-flash` was a placeholder). Documented `GEMINI_API_KEY` /
+  `GEMINI_MODEL` in `.env.example`. Verified on local dev: disabled → 503 (both actions); enabled
+  (dummy key) → gate flips, reaches `generativelanguage.googleapis.com`, upstream auth error degrades
+  to a graceful 500. Suite 85 green. **Frontend port complete (all 6 phases).**
 - Week 1 build (branch `feat/week1-auth-search`): JWT session cookie + `/api/me`, search results
   page, sample-listings seed. Local dev runs on plain Postgres (local or managed); Docker removed.
   See `build-plan-phase1.md` Week 1.
