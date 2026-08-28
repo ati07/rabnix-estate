@@ -6,6 +6,59 @@ its header — see [docs/README.md](./README.md) for the convention.
 
 ## [Unreleased]
 - _Pending: target city, team size, and seeding channel decisions (PRD §7)._
+- `frontend-port-v1.md` **1.6.0** — spec to port the `rabnix-estate-v1` Tailwind design onto the
+  real Prisma/Postgres backend (adapter-centered, 6 phases: tooling → adapter → core UI → post →
+  favorites → AI/Gemini). Approved; §8 decisions signed off. Phases 0–5 done + cutover complete.
+- Frontend port **Cutover** (v1 → root): promoted the v1 home from `/v2` to the production root `/`.
+  Split the app into two isolated App Router root layouts via route groups — `(marketing)/` (v1
+  design: own `<html>/<body>`, `@import "tailwindcss"` with full preflight, `@theme` brand tokens,
+  system-sans, no legacy chrome; server `page.tsx` fetches live listings/favorites → `HomeView`) and
+  `(site)/` (all legacy pages — search/post/login/dashboard/admin/listings + old landing at `/legacy`
+  — keeping the mega-menu header/footer chrome and the no-preflight `globals.css` + DM Sans). Removed
+  the top-level `app/layout.tsx` so each group owns its root; `/v2` → 307 → `/`. Fixes the `/v2`
+  visual mismatch (doubled navbar, width cap, missing preflight, wrong font). Typecheck + build green;
+  suite 85.
+- Frontend port **Phase 0** (tooling): added Tailwind v4 + PostCSS (theme + utilities, preflight
+  excluded so it coexists with the legacy plain-CSS design system) plus `lucide-react`, `motion`,
+  `clsx`, `tailwind-merge`, `class-variance-authority`, `@hookform/resolvers`. `@theme` brand tokens
+  mirror the existing `:root` palette. Build + typecheck green.
+- Frontend port **Phase 1** (adapter): `src/lib/property-adapter.ts` translates Prisma `Listing` ⇄ v1
+  `Property` (intent+propertyType↔listingType enum split, bhk/areaSqft renames, derived
+  priceFormatted/pricePerSqFt/isVerified, safe defaults). Ported UI helpers (`lib/types.ts`,
+  `lib/formatters.ts`, `lib/utils.ts`). New persisted `Listing` fields `reraId` /
+  `constructionStatus` / `isFeatured` (schema + `prisma db push` + `data-model.sql`). 13 adapter unit
+  tests; full suite 85 green.
+- Frontend port **Phase 2** (core listing UI, server-wired): 15 v1 components under
+  `src/components/v2/`; server component `src/app/v2/page.tsx` fetches live listings and maps them
+  through the adapter into the client shell `src/app/v2/HomeView.tsx` (runs alongside legacy `/`).
+  `pickInitialCity()` derives the default city from real inventory (fixes a default-city/inventory
+  mismatch that hid all listings). Static city/locality data ported into a trimmed `realEstateData.ts`
+  (mock `INITIAL_PROPERTIES` dropped). Verified on local Postgres: `/v2` renders 22 live Pune listings
+  with the v1 look; legacy `/` + `/search` still 200; typecheck + build green.
+- Frontend port **Phase 3** (post-property flow): `PostPropertyModal` now persists to the real
+  backend — assembles a `PostPropertyFormState`, maps it via `formToListingInput`, `POST`s to
+  `/api/listings` then `/api/listings/[id]/submit`, with auth gating (401 → inline "Sign in" link to
+  `/login?redirect=/v2`) and a busy state. `POST /api/listings` extended to accept free-text
+  `city` + `locality` (find-or-creates `City`/`Locality`, resolves centroid, Pune-centroid fallback)
+  and to persist `floor` / `amenities` / `reraId` / `constructionStatus`. `submit` auto-approves to
+  `live` in non-production (dev convenience, like `/api/dev/login`); `pending` in production. Verified
+  end-to-end on local DB: unauth → 401; register → create → submit → `live` → appears on `/v2` + search.
+  Known gap: the modal's external photo URL isn't persisted yet (media route ingests uploaded files).
+- Frontend port **Phase 4** (shortlist / favorites): `HomeView.handleToggleShortlist` now persists to
+  the real backend — optimistic toggle + `POST`/`DELETE /api/listings/[id]/favorite` with rollback,
+  logged-out visitors routed to `/login?redirect=/v2`. `src/app/v2/page.tsx` reads the session and
+  hydrates `initialShortlistedIds` from the buyer's `Favorite` rows (+ `isAuthenticated`), so hearts
+  and the shortlist drawer survive reload. Verified on local DB: unauth → 401; idempotent save/unsave;
+  SSR `/v2` shows 0 filled hearts before and 1 after saving. Suite 85 green.
+- Frontend port **Phase 5** (AI/Gemini — final): ported `src/app/api/gemini/advisor/route.ts` +
+  `@google/genai`, **disabled by default** — with no `GEMINI_API_KEY` the route returns a clean
+  `{ success:false }` **503** and makes no upstream call, so `AiValuationModal` / `AiGenieChatDrawer`
+  degrade gracefully. Two actions: `valuation` (structured JSON via `responseSchema`) and `chat`
+  ("Rabnix Genie"). Model is env-overridable (`GEMINI_MODEL`), defaulting to the valid
+  `gemini-2.5-flash` (v1's `gemini-3.7-flash` was a placeholder). Documented `GEMINI_API_KEY` /
+  `GEMINI_MODEL` in `.env.example`. Verified on local dev: disabled → 503 (both actions); enabled
+  (dummy key) → gate flips, reaches `generativelanguage.googleapis.com`, upstream auth error degrades
+  to a graceful 500. Suite 85 green. **Frontend port complete (all 6 phases).**
 - Week 1 build (branch `feat/week1-auth-search`): JWT session cookie + `/api/me`, search results
   page, sample-listings seed. Local dev runs on plain Postgres (local or managed); Docker removed.
   See `build-plan-phase1.md` Week 1.

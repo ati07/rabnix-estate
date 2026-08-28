@@ -14,6 +14,7 @@ CREATE TYPE listing_intent   AS ENUM ('sale', 'rent');
 CREATE TYPE property_type     AS ENUM ('apartment', 'independent_house', 'villa', 'plot', 'commercial', 'pg');
 CREATE TYPE listing_status    AS ENUM ('draft', 'pending', 'live', 'expired', 'rejected');
 CREATE TYPE furnishing_type   AS ENUM ('unfurnished', 'semi_furnished', 'furnished');
+CREATE TYPE construction_status AS ENUM ('ready_to_move', 'under_construction', 'new_launch');
 CREATE TYPE enquiry_channel   AS ENUM ('call', 'form', 'whatsapp');
 CREATE TYPE verification_tier AS ENUM ('phone', 'document', 'physical');
 CREATE TYPE verification_status AS ENUM ('pending', 'verified', 'failed');
@@ -72,6 +73,9 @@ CREATE TABLE listings (
     floor         SMALLINT,
     furnishing    furnishing_type,
     amenities     TEXT[] NOT NULL DEFAULT '{}',
+    rera_id             TEXT,                            -- RERA registration id; presence ⇒ "RERA approved" badge (v1 design)
+    construction_status construction_status,             -- Ready to Move / Under Construction / New Launch
+    is_featured         BOOLEAN NOT NULL DEFAULT false,  -- editorial "Featured" placement
     locality_id   UUID REFERENCES localities(id),
     geo           GEOGRAPHY(POINT, 4326) NOT NULL,       -- map-bounds & radius search
     quality_score NUMERIC(4,2) NOT NULL DEFAULT 0,       -- completeness + verification (ranking)

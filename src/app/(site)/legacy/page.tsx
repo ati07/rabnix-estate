@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { HeroSearch } from "./HeroSearch";
-import { BrowseSections } from "./BrowseSections";
+import { HeroSearch } from "../../HeroSearch";
+import { BrowseSections } from "../../BrowseSections";
 import { ListingRail } from "@/components/ListingRail";
 import { TopLocalities } from "@/components/TopLocalities";
 import { FeaturedProjects } from "@/components/demo/FeaturedProjects";

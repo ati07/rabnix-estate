@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LocalitySearch } from "./search/LocalitySearch";
+import { LocalitySearch } from "./(site)/search/LocalitySearch";
 
 // Hero search card — matches the DOMUS landing reference: a Buy/Rent/Commercial/New-Projects
 // tab strip above a Location / Property Type / Budget / Bedrooms field row. It's a plain GET

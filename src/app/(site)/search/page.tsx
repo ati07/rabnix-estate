@@ -5,7 +5,7 @@ import { searchListings } from "@/modules/search/searchListings";
 import { LocalitySearch } from "./LocalitySearch";
 import { SearchResults, type SearchResult } from "./SearchResults";
 import { SaveSearchButton } from "./SaveSearchButton";
-import { BrowseSections } from "../BrowseSections";
+import { BrowseSections } from "../../BrowseSections";
 
 const CITY = process.env.NEXT_PUBLIC_DEFAULT_CITY ?? "your city";
 

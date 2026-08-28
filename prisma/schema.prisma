@@ -48,6 +48,14 @@ enum Furnishing {
   furnished
 }
 
+// Construction stage — powers the v1 design's "Ready to Move / Under Construction" filter pills.
+// Added for the frontend port (docs/frontend-port-v1.md §3.4).
+enum ConstructionStatus {
+  ready_to_move
+  under_construction
+  new_launch
+}
+
 enum EnquiryChannel {
   call
   form
@@ -120,6 +128,11 @@ model Listing {
   floor        Int?
   furnishing   Furnishing?
   amenities    String[]       @default([])
+  // v1-design fields (docs/frontend-port-v1.md §3.4) — persisted because they drive
+  // filter pills / badges; other v1 Property fields stay derived or hidden.
+  reraId             String?             // RERA registration id; presence ⇒ "RERA approved" badge
+  constructionStatus ConstructionStatus? // Ready to Move / Under Construction / New Launch
+  isFeatured         Boolean             @default(false) // editorial "Featured" placement
   locality     Locality?      @relation(fields: [localityId], references: [id])
   localityId   String?
   lat          Float
