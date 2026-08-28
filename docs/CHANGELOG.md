@@ -6,9 +6,9 @@ its header — see [docs/README.md](./README.md) for the convention.
 
 ## [Unreleased]
 - _Pending: target city, team size, and seeding channel decisions (PRD §7)._
-- `frontend-port-v1.md` **1.2.0** — spec to port the `rabnix-estate-v1` Tailwind design onto the
+- `frontend-port-v1.md` **1.3.0** — spec to port the `rabnix-estate-v1` Tailwind design onto the
   real Prisma/Postgres backend (adapter-centered, 6 phases: tooling → adapter → core UI → post →
-  favorites → AI/Gemini). Approved; §8 decisions signed off. Phases 0–2 marked done.
+  favorites → AI/Gemini). Approved; §8 decisions signed off. Phases 0–3 marked done.
 - Frontend port **Phase 0** (tooling): added Tailwind v4 + PostCSS (theme + utilities, preflight
   excluded so it coexists with the legacy plain-CSS design system) plus `lucide-react`, `motion`,
   `clsx`, `tailwind-merge`, `class-variance-authority`, `@hookform/resolvers`. `@theme` brand tokens
@@ -26,6 +26,15 @@ its header — see [docs/README.md](./README.md) for the convention.
   mismatch that hid all listings). Static city/locality data ported into a trimmed `realEstateData.ts`
   (mock `INITIAL_PROPERTIES` dropped). Verified on local Postgres: `/v2` renders 22 live Pune listings
   with the v1 look; legacy `/` + `/search` still 200; typecheck + build green.
+- Frontend port **Phase 3** (post-property flow): `PostPropertyModal` now persists to the real
+  backend — assembles a `PostPropertyFormState`, maps it via `formToListingInput`, `POST`s to
+  `/api/listings` then `/api/listings/[id]/submit`, with auth gating (401 → inline "Sign in" link to
+  `/login?redirect=/v2`) and a busy state. `POST /api/listings` extended to accept free-text
+  `city` + `locality` (find-or-creates `City`/`Locality`, resolves centroid, Pune-centroid fallback)
+  and to persist `floor` / `amenities` / `reraId` / `constructionStatus`. `submit` auto-approves to
+  `live` in non-production (dev convenience, like `/api/dev/login`); `pending` in production. Verified
+  end-to-end on local DB: unauth → 401; register → create → submit → `live` → appears on `/v2` + search.
+  Known gap: the modal's external photo URL isn't persisted yet (media route ingests uploaded files).
 - Week 1 build (branch `feat/week1-auth-search`): JWT session cookie + `/api/me`, search results
   page, sample-listings seed. Local dev runs on plain Postgres (local or managed); Docker removed.
   See `build-plan-phase1.md` Week 1.

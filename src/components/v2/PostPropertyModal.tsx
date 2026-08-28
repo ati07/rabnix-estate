@@ -19,9 +19,11 @@ import {
   ArrowRight,
   ArrowLeft
 } from 'lucide-react';
-import { Property, ListingType, PropertyCategory, FurnishingStatus, FacingDirection, ConstructionStatus } from '@/lib/types';
+import Link from 'next/link';
+import { Property, ListingType, PropertyCategory, FurnishingStatus, FacingDirection, ConstructionStatus, PostPropertyFormState } from '@/lib/types';
 import { CITIES_DATA } from '@/lib/realEstateData';
 import { formatIndianCurrency } from '@/lib/formatters';
+import { formToListingInput } from '@/lib/property-adapter';
 
 interface PostPropertyModalProps {
   isOpen: boolean;
@@ -36,6 +38,9 @@ export function PostPropertyModal({
 }: PostPropertyModalProps) {
   const [step, setStep] = useState<number>(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [needLogin, setNeedLogin] = useState(false);
 
   // Form Fields
   const [listingType, setListingType] = useState<ListingType>('buy');
@@ -93,15 +98,89 @@ export function PostPropertyModal({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Assemble the v1 form state, then persist through the real backend: create a draft
+  // (POST /api/listings, which find-or-creates the city/locality and maps enums via the adapter),
+  // then submit it (auto-live in dev, pending in prod). See docs/frontend-port-v1.md §5 Phase 3.
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    setNeedLogin(false);
+
+    const form: PostPropertyFormState = {
+      listingType,
+      category,
+      city,
+      locality,
+      title,
+      bhk,
+      bathrooms,
+      carpetAreaSqFt,
+      superBuiltUpAreaSqFt: Math.round(carpetAreaSqFt * 1.3),
+      price,
+      maintenance,
+      furnishing,
+      floor,
+      totalFloors,
+      facing,
+      constructionStatus,
+      possessionDate: 'Immediate',
+      reraId,
+      amenities: selectedAmenities,
+      description,
+      ownerName,
+      ownerPhone,
+      ownerEmail: '',
+      imageUrls: photoUrl ? [photoUrl] : [],
+    };
+
+    try {
+      const res = await fetch('/api/listings', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ ...formToListingInput(form), city, locality }),
+      });
+
+      if (res.status === 401) {
+        setNeedLogin(true);
+        setError('Sign in to post your property.');
+        setBusy(false);
+        return;
+      }
+      if (!res.ok) {
+        const err = (await res.json().catch(() => null)) as { error?: { message?: string } } | null;
+        setError(err?.error?.message ?? 'Could not create listing.');
+        setBusy(false);
+        return;
+      }
+
+      const { listing } = (await res.json()) as { listing: { id: string } };
+      const pub = await fetch(`/api/listings/${listing.id}/submit`, { method: 'POST' });
+      if (!pub.ok) {
+        setError('Draft saved, but submitting for review failed. Try again from your dashboard.');
+        setBusy(false);
+        return;
+      }
+
+      onPropertyAdded(buildOptimisticProperty(listing.id));
+      setIsSubmitted(true);
+    } catch {
+      setError('Network error — check your connection and try again.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  // Optimistic card so the user sees their listing immediately (v1 UX). The canonical row lives in
+  // the DB and re-hydrates on the next server render via the adapter.
+  const buildOptimisticProperty = (id: string): Property => {
     const formattedPrice = listingType === 'rent' || listingType === 'pg'
       ? `₹${price.toLocaleString('en-IN')} / mo`
       : formatIndianCurrency(price);
 
-    const newProp: Property = {
-      id: `mb-user-${Date.now()}`,
+    return {
+      id,
       title: title || `${bhk} BHK ${category} in ${locality || 'Prime Locality'}, ${city}`,
       listingType,
       category,
@@ -142,9 +221,6 @@ export function PostPropertyModal({
       },
       createdAt: new Date().toISOString().split('T')[0]
     };
-
-    onPropertyAdded(newProp);
-    setIsSubmitted(true);
   };
 
   return (
@@ -544,21 +620,37 @@ export function PostPropertyModal({
                   />
                 </div>
 
+                {error && (
+                  <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 space-y-1">
+                    <p>{error}</p>
+                    {needLogin && (
+                      <Link
+                        href="/login?redirect=/v2&mode=register"
+                        className="inline-flex items-center gap-1 text-[#0E7C5D] underline"
+                      >
+                        Sign in to continue
+                      </Link>
+                    )}
+                  </div>
+                )}
+
                 <div className="flex justify-between pt-2">
                   <button
                     type="button"
                     onClick={() => setStep(2)}
-                    className="bg-[#F8FAFC] text-[#172033] border border-[#E2E8F0] font-bold text-xs px-4 py-2.5 rounded-xl hover:bg-[#E2E8F0] transition-colors flex items-center gap-1 cursor-pointer"
+                    disabled={busy}
+                    className="bg-[#F8FAFC] text-[#172033] border border-[#E2E8F0] font-bold text-xs px-4 py-2.5 rounded-xl hover:bg-[#E2E8F0] transition-colors flex items-center gap-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ArrowLeft className="w-4 h-4" />
                     <span>Back</span>
                   </button>
                   <button
                     type="submit"
-                    className="bg-[#18A67D] hover:bg-[#0E7C5D] text-white font-bold text-sm px-8 py-3 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                    disabled={busy}
+                    className="bg-[#18A67D] hover:bg-[#0E7C5D] text-white font-bold text-sm px-8 py-3 rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     <Sparkles className="w-4 h-4 text-amber-300" />
-                    <span>Publish Listing 100% FREE</span>
+                    <span>{busy ? 'Publishing…' : 'Publish Listing 100% FREE'}</span>
                   </button>
                 </div>
               </div>

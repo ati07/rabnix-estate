@@ -1,6 +1,6 @@
 # Frontend Port — v1 Design → rabnix-estate
 
-> **Version:** 1.2.0 · **Status:** Approved · **Last updated:** 2026-08-28 · **Owner:** Engineering
+> **Version:** 1.3.0 · **Status:** Approved · **Last updated:** 2026-08-28 · **Owner:** Engineering
 
 Adopt the `rabnix-estate-v1` design (a Tailwind-based, modal-driven UI shell) as the production
 frontend of `rabnix-estate`, wiring every screen to the **real** Prisma/Postgres backend and API
@@ -151,10 +151,24 @@ Each phase is independently demoable and closes with the standard ship loop.
   22 live Pune listings (Baner/Kharadi/Hinjewadi/Wakad, BHK/Apartment content, no empty state);
   legacy `/` and `/search` still 200. Typecheck + prod build green (`/v2` ≈ 32.9 kB).
 
-### Phase 3 — Post-property flow
+### Phase 3 — Post-property flow — ✅ Done (2026-08-28)
 - Wire `PostPropertyModal` to `POST /api/listings` + `/api/listings/[id]/submit` with auth gating
   (reuse `/post` logic). `formToListingInput` maps the modal's form state to the create payload.
 - **DoD:** post → publish → appears in search, end-to-end on local DB; non-authed users routed to `/login`.
+- **Delivered:** `PostPropertyModal.handleSubmit` now assembles a `PostPropertyFormState`, calls
+  `formToListingInput`, and `POST`s `{...input, city, locality}` to `/api/listings`, then
+  `/api/listings/[id]/submit`. `POST /api/listings` extended to accept free-text `city` + `locality`
+  (find-or-creates the `City`/`Locality`, resolves the centroid, falls back to the Pune centroid when
+  a fresh locality has no coords) and to persist `floor` / `amenities` / `reraId` / `constructionStatus`.
+  `submit` **auto-approves to `live` in non-production** (dev convenience mirroring `/api/dev/login`);
+  stays `pending` under `NODE_ENV=production` so the moderation queue is still exercised. Auth-gated:
+  a 401 surfaces an inline "Sign in to continue" link to `/login?redirect=/v2`; the button shows a
+  busy state. Verified end-to-end on local DB (`npm run dev`): unauth POST → 401; register → create
+  (201, all enums/renames mapped) → submit → `live`; the new listing renders on `/v2` and returns from
+  the search API. Test data cleaned up; suite 85 green.
+- **Known gap (deferred):** the modal's single external photo URL is not persisted — the media route
+  ingests uploaded files (EXIF-strip → WebP → pHash), not remote URLs — so modal-posted listings use
+  the fallback image until a file-upload step (or URL-ingest) is added.
 
 ### Phase 4 — Shortlist / favorites
 - Wire `ShortlistDrawer` + card heart toggles to `/api/listings/[id]/favorite` (`Favorite` model),
