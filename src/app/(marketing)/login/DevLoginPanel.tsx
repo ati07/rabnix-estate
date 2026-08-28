@@ -44,16 +44,16 @@ export function DevLoginPanel() {
   }
 
   return (
-    <div className="dev-panel">
-      <p className="meta" style={{ margin: 0 }}>
-        <strong>Dev quick login</strong> — no password, dev only
+    <div className="mt-6 rounded-xl border border-dashed border-[#CBD5E1] bg-[#F8FAFC] p-4">
+      <p className="text-xs text-[#64748B]">
+        <strong className="font-bold text-[#172033]">Dev quick login</strong> — no password, dev only
       </p>
-      <div className="dev-panel-buttons">
+      <div className="mt-3 grid grid-cols-3 gap-2">
         {ROLES.map(({ role, label }) => (
           <button
             key={role}
             type="button"
-            className="btn btn-sm"
+            className="rounded-lg border border-[#E2E8F0] bg-white py-2 text-xs font-bold text-[#172033] shadow-xs transition-colors hover:border-[#18A67D] hover:text-[#0E7C5D] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
             onClick={() => login(role)}
             disabled={busy !== null}
           >
@@ -61,7 +61,7 @@ export function DevLoginPanel() {
           </button>
         ))}
       </div>
-      {error && <p className="error" style={{ margin: 0 }}>{error}</p>}
+      {error && <p className="mt-2 text-sm font-medium text-red-700">{error}</p>}
     </div>
   );
 }
